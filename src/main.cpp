@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
+#include <cstring>
 
 /*********************************** */
 class LIST;
@@ -70,10 +71,10 @@ NODE::NODE(std::string _type){
     inc_spikes = new double [length_of_buffer];
     for (int i = 0; i < length_of_buffer; i++)
         inc_spikes[i] = 0;
-    switch (_type) {
-    case "neuron_liaf":
+    
+    if(!strcmp(_type.c_str(), "neuron_liaf")){
         node_ess = new NEURON_IAF;
-    default:
+    } else {
         node_ess = NULL;
     }
 
