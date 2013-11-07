@@ -1,6 +1,6 @@
 
 CC            = gcc
-CXX           = g++ #-m64
+CXX           = g++ -std=c++11 #-m64
 CFLAGS        = -g -Wall
 
 DEL_FILE      = rm
@@ -11,10 +11,12 @@ OBJECT_DIR    = obj
 SOURCES       = $(SOURCE_DIR)/main.cpp \
     $(SOURCE_DIR)/nodes.cpp \
     $(SOURCE_DIR)/synapses.cpp \
+    $(SOURCE_DIR)/cyctimbuf.cpp \
     $(SOURCE_DIR)/core.cpp 
 OBJECTS       = $(OBJECT_DIR)/main.o \
     $(OBJECT_DIR)/nodes.o \
     $(OBJECT_DIR)/synapses.o \
+    $(OBJECT_DIR)/cyctimbuf.o \
     $(OBJECT_DIR)/core.o 
 DESTDIR_TARGET = hem.exe
 
@@ -41,12 +43,14 @@ reallyclean:
 $(OBJECT_DIR)/main.o: $(SOURCE_DIR)/main.cpp \
     $(SOURCE_DIR)/core.h \
     $(SOURCE_DIR)/nodes.h \
+    $(SOURCE_DIR)/cyctimbuf.h \
     $(SOURCE_DIR)/synapses.h
 	$(CXX) -c $(CFLAGS) -o $(OBJECT_DIR)/main.o $(SOURCE_DIR)/main.cpp
 
 $(OBJECT_DIR)/core.o: $(SOURCE_DIR)/core.cpp \
     $(SOURCE_DIR)/core.h \
     $(SOURCE_DIR)/nodes.h \
+    $(SOURCE_DIR)/cyctimbuf.h \
     $(SOURCE_DIR)/synapses.h
 	$(CXX) -c $(CFLAGS) -o $(OBJECT_DIR)/core.o $(SOURCE_DIR)/core.cpp
 
@@ -57,3 +61,7 @@ $(OBJECT_DIR)/nodes.o: $(SOURCE_DIR)/nodes.cpp \
 $(OBJECT_DIR)/synapses.o: $(SOURCE_DIR)/synapses.cpp \
     $(SOURCE_DIR)/synapses.h 
 	$(CXX) -c $(CFLAGS) -o $(OBJECT_DIR)/synapses.o $(SOURCE_DIR)/synapses.cpp
+	
+$(OBJECT_DIR)/cyctimbuf.o: $(SOURCE_DIR)/cyctimbuf.cpp \
+    $(SOURCE_DIR)/cyctimbuf.h 
+	$(CXX) -c $(CFLAGS) -o $(OBJECT_DIR)/cyctimbuf.o $(SOURCE_DIR)/cyctimbuf.cpp

@@ -1,70 +1,54 @@
 #include "core.h"
 
-LIST* NODE::runner = NULL;
-float NODE::dt = 0.1;
-float NODE::max_delay = 10;
+double NODE::dt = 0.1;
+double NODE::max_delay = 1;
 
 NODE::NODE(std::string _type){
-    out_list = NULL;
-    length_of_buffer = max_delay / dt + 1;
-    inc_spikes = new float [length_of_buffer];
-    for (int i = 0; i < length_of_buffer; i++)
-        inc_spikes[i] = 0;
-    
-    if(!strcmp(_type.c_str(), "neuron_liaf")){
+    if( _type.compare("neuron_liaf") != 0 ){
         node_ess = new NEURON_IAF;
+    } else if( _type.compare("null_node") != 0 ) {
+        node_ess = new NULL_NODE;
     } else {
-        node_ess = NULL;
+        node_ess = new NULL_NODE;
     }
-    I = 0;
-    I_ext = 0;
+
+    I_stim = 0;
+    inc_spikes = WIDE_CYCLING_TIME_BUFFER (dt, max_delay, node_ess->typesSynapsesSupported()) ;
 }
 
 int NODE::addSynapse (SYNAPSE* _synapse){
-    out_list = new LIST (_synapse, out_list);
+    out_list.push_back(_synapse);
     return 0;
 }
 
-float NODE::evolve(float _current_time){
-    I = I_ext + 
-    if(node_ess->evolve(_current_time, dt, I)){
-        runner = out_list;
-        while(runner){
-            runner->syn->preSpike(_current_time);
-            runner = runner -> next;
-        }
-        return 1;
-    }
+double NODE::evolve(double _current_time){
+
     return 0;
 }
 
-float NODE::addSpike(float _weight, float _time){
-    inc_spikes[(int) (_time / dt)] += _weight;
+double NODE::addSpike(double _delay, double _weight, int _type){
+    inc_spikes.push(_delay, _weight, _type);
     return _weight;
 }
 /**************************************************************************** */
 
-SYNAPSE::SYNAPSE(std::string _type, NODE* _pn, float _d){
+SYNAPSE::SYNAPSE(std::string _type, NODE* _pn, double _d){
     postneu = _pn;
     delay = _d;
 
-    if(!strcmp(_type.c_str(), "synapse_static")){
+    if( _type.compare("synapse_static") != 0 ){
         syn_ess = new SYNAPSE_STATIC;
+    } else if( _type.compare("null_node") != 0 ){
+        syn_ess = new NULL_SYNAPSE;
     } else {
-        syn_ess = NULL;
+        syn_ess = new NULL_SYNAPSE;
     }
 }
 
-float SYNAPSE::preSpike(float _current_time){
+double SYNAPSE::preSpike(double _current_time){
     return postneu->addSpike(syn_ess->preSpike(_current_time), delay);
 }
 
-float SYNAPSE::postSpike(float _current_time){
+double SYNAPSE::postSpike(double _current_time){
     return syn_ess->postSpike(_current_time);
-}
-/**************************************************************************** */
-
-LIST::LIST(SYNAPSE* _synapse, LIST* _oh){
-    syn = _synapse;
-    next = _oh;
 }

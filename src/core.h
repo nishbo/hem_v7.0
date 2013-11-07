@@ -1,58 +1,48 @@
 #ifndef CORE_H
 #define CORE_H
 
-#include <cstdio>
-#include <cstdlib>
 #include <iostream>
-#include <cstring>
+#include <string>
+#include <vector>
 
 #include "nodes.h"
 #include "synapses.h"
+#include "cyctimbuf.h"
 
-class LIST;
 class NODE;
 class SYNAPSE;
 
 class NODE{
-    NODE_TYPE* node_ess;
-    float* inc_spikes; //buffer for incoming spikes
-    int length_of_buffer; //length of spike buffer
-    static LIST* runner; //runner to go through LIST lists
-    LIST* out_list; // list of outgoing synapses
-    float I_ext;
-    float I;
-    int inc_spikes_iter;
+    NODE_TYPE* node_ess;        //essence of the node - defines it behavior
+    std::vector<SYNAPSE*> out_list; // list of outgoing synapses
 
-    NODE();
+    WIDE_CYCLING_TIME_BUFFER inc_spikes;
+
+    double I_stim;
+
+    NODE(); // You do not want to create just a node! define it's type!
 public:
-    static float dt; //needed for buffer
-    static float max_delay; //maximum of delays of incoming synapses
+    static double dt;
+    static double max_delay;
 
     NODE(std::string _type);
-    float evolve(float _current_time); //node evolves for dt
+    double evolve(double _current_time); //node evolves for dt
     int addSynapse(SYNAPSE* _synapse); //add an outgoing synapse for this node
-    float addSpike(float _weight, float _time); //spike arrives after _time with _weight amount
+    //spike arrives after _time with _weight amount :
+    double addSpike(double _delay, double _weight, int _type = 0); 
 };
 
 class SYNAPSE{
     NODE* postneu; //postsynaptic neuron
-    SYNAPSE_TYPE* syn_ess;
-    float delay;
+    SYNAPSE_TYPE* syn_ess;  //essence of the synapse - defines it evolve
+    double delay;    // some time-constant defined by length of synapse and speed 
+                    // of propagation of spike
 
-    SYNAPSE();
+    SYNAPSE(); // You do not want to create just a synapse! define it's type!
 public:
-    SYNAPSE(std::string _type, NODE* _pn, float _d);
-    float preSpike(float _current_time); //signal of presynaptic spike
-    float postSpike(float _current_time); //signal of postsynaptic spike
-};
-
-
-class LIST{
-//singly linked list of synapses. used in nodes and main
-public:
-    LIST(SYNAPSE* _synapse, LIST* _oh);
-    SYNAPSE* syn; //some synapse
-    LIST* next; // next in line
+    SYNAPSE(std::string _type, NODE* _pn, double _d);
+    double preSpike(double _current_time); //signal of presynaptic spike
+    double postSpike(double _current_time); //signal of postsynaptic spike
 };
 
 #endif // CORE_H

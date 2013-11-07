@@ -5,15 +5,24 @@
 
 class SYNAPSE_TYPE{
 public:
-    virtual float preSpike(float _current_time)=0;
-    virtual float postSpike(float _current_time)=0;
+    virtual std::string type()=0;
+    virtual double preSpike(double _current_time)=0;
+    virtual double postSpike(double _current_time)=0;
+};
+
+class NULL_SYNAPSE: public SYNAPSE_TYPE{
+public:
+    std::string type();
+    double preSpike(double _current_time);
+    double postSpike(double _current_time);
 };
 
 class SYNAPSE_STATIC: public SYNAPSE_TYPE{
-    float weight;
+    double weight;
 public:
-    float preSpike(float _current_time);
-    float postSpike(float _current_time);
+    std::string type();
+    double preSpike(double _current_time);
+    double postSpike(double _current_time);
 };
 
 
