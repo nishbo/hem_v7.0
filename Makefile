@@ -1,6 +1,6 @@
 
 CC            = gcc
-CXX           = g++ -std=c++11 #-m64
+CXX           = g++-4 -std=c++11 #-m64
 CFLAGS        = -g -Wall
 
 DEL_FILE      = rm
