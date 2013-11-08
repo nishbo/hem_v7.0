@@ -16,13 +16,18 @@ NODE::NODE(std::string _class){
     inc_spikes = new WIDE_CYCLING_TIME_BUFFER (dt, max_delay, node_ess->typesSynapsesSupported()) ;
 }
 
-int NODE::addSynapse (SYNAPSE* _synapse){
+int NODE::addOutgoingSynapse (SYNAPSE* _synapse){
     out_list.push_back(_synapse);
     return 0;
 }
 
-double NODE::evolve(double _current_time){
+int NODE::addIncomingSynapse (SYNAPSE* _synapse){
+    inc_list.push_back(_synapse);
+    return 0;
+}
 
+double NODE::evolve(double _current_time){
+    node_ess->evolve()
     return 0;
 }
 

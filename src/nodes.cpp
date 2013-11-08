@@ -38,17 +38,24 @@ NEURON_IAF::NEURON_IAF(){
     last_spiked = -tau_ref;
 }
 
+double NEURON_IAF::synEvolve(double _g, double _gs, double _tau_syn, double _dt){
+    return _g + _dt * ( - _g / _tau_syn ) + _gs;
+}
+
 int NEURON_IAF::evolve(double _current_time, double _dt, double _I, double*  _syn){
-    // if(_current_time < last_spiked + tau_ref){
-    //     V = Vreset;
-    // } else {
-    //     V += _dt * ( - (V - Vrest) + Rin * _I) / tau_m;
-    //     if(V >= Vth){ // spike
-    //         V = Vreset;
-    //         last_spiked = _current_time;
-    //         return 1;
-    //     }
-    // }
+    if(_current_time < last_spiked + tau_ref){
+        V = Vreset;
+    } else {
+        I_full = _I + \
+            synEvolve(g_plus, _syn[0], tau_syn_plus, _dt) * (Erev_plus - V) + \
+            synEvolve(g_minus, _syn[1], tau_syn_minus, _dt) * (Erev_minus - V);
+        V += _dt * ( - (V - Vrest) + Rin * I_full) / tau_m;
+        if(V >= Vth){ // spike
+            V = Vreset;
+            last_spiked = _current_time;
+            return 1;
+        }
+    }
     return 0;
 }
 

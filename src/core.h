@@ -1,6 +1,10 @@
 #ifndef CORE_H
 #define CORE_H
 
+#ifndef Malloc
+#define Malloc(n,t) (t*)std::malloc((n)*sizeof(t))
+#endif // Malloc
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -15,6 +19,7 @@ class SYNAPSE;
 class NODE{
     NODE_TYPE* node_ess;        //essence of the node - defines it behavior
     std::vector<SYNAPSE*> out_list; // list of outgoing synapses
+    std::vector<SYNAPSE*> inc_list; // list of outgoing synapses
 
     WIDE_CYCLING_TIME_BUFFER* inc_spikes;
 
@@ -27,7 +32,8 @@ public:
 
     NODE(std::string _class);
     double evolve(double _current_time); //node evolves for dt
-    int addSynapse(SYNAPSE* _synapse); //add an outgoing synapse for this node
+    int addOutgoingSynapse(SYNAPSE* _synapse); //add an outgoing synapse for this node
+    int addIncomingSynapse(SYNAPSE* _synapse); //add an outgoing synapse for this node
     //spike arrives after _time with _weight amount :
     double addSpike(double _delay, double _weight, int _type = 0); 
 };

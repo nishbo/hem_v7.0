@@ -2,8 +2,18 @@
 #include <cstring>
 
 #include "core.h"
+#include "topology.h"
 
 int main(int argc, char const *argv[]){
+
+    int N = 2;
+    NODE** node_array = Malloc(N, NODE*);
+    for(int i=0; i < N; i++){
+        node_array[i] = new NODE("neuron_liaf");
+    }
+    std::vector<SYNAPSE*> syn_array;
+
+    topology::connectN2N(node_array[0], "static_synapse", node_array[1], 0.1, syn_array);
 
     // WIDE_CYCLING_TIME_BUFFER a(0.1, 2, 3);
     // a.push(1.2, 5, 0);
