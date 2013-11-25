@@ -7,7 +7,7 @@ CYCLING_TIME_BUFFER::CYCLING_TIME_BUFFER(double _step, double _turn){
     tstep = _step;
     timeturn = _turn;
     leng = timeturn / tstep + 1;
-    if( leng <= 0 or tstep <= 0 ){
+    if( leng <= 0 || tstep <= 0 ){
         std::cout<<"\nError: Bad contruction of 'CYCLING_TIME_BUFFER'.\n";
         std::cout<<"tstep = "<<tstep<<"; timeturn = "<<timeturn<<"; leng = ";
         std::cout<<leng<<std::endl;
@@ -29,7 +29,7 @@ double CYCLING_TIME_BUFFER::pull(){
 }
 
 double CYCLING_TIME_BUFFER::push(double _tdiffer, double _a){
-    if( _tdiffer > timeturn or _tdiffer < 0){
+    if( _tdiffer > timeturn || _tdiffer < 0){
         std::cout<<"Warning! 'CYCLING_TIME_BUFFER': ";
         std::cout<<"Tried to push bad time '_tdiffer' = ";
         std::cout<<"'"<<_tdiffer<<"'"<<std::endl;
@@ -71,7 +71,7 @@ double* WIDE_CYCLING_TIME_BUFFER::pull(){
 }
 
 double WIDE_CYCLING_TIME_BUFFER::push(double _tdiffer, double _a, int _bufnum){
-    if( _bufnum >= width or _bufnum < 0){
+    if( _bufnum >= width || _bufnum < 0){
         std::cout<<"Warning! 'WIDE_CYCLING_TIME_BUFFER': ";
         std::cout<<"Tried to push in wrong '_bufnum' = ";
         std::cout<<"'"<<_bufnum<<"'"<<std::endl;
