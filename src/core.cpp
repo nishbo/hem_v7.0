@@ -27,7 +27,7 @@ int NODE::addIncomingSynapse (SYNAPSE* _synapse){
 }
 
 double NODE::evolve(double _current_time){
-    node_ess->evolve()
+    // node_ess->evolve();
     return 0;
 }
 
