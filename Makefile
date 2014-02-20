@@ -20,7 +20,7 @@ OBJECTS       = $(OBJECT_DIR)/main.o \
     $(OBJECT_DIR)/cyctimbuf.o \
     $(OBJECT_DIR)/topology.o \
     $(OBJECT_DIR)/core.o 
-DESTDIR_TARGET = hem.exe
+DESTDIR_TARGET = hem
 
 first: all
 

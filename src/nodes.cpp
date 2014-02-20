@@ -4,7 +4,7 @@ int NODE_TYPE::typesSynapsesSupported(){
     return 0;
 }
 
-/******************** NULL NODE ********************************************* */
+/****************************** NULL NODE *********************************** */
 // Class basically represents a node-filler that does nothing.
 
 std::string NULL_NODE::type(){
@@ -15,7 +15,7 @@ int NULL_NODE::evolve(double _current_time, double _dt, double _I, double*  _syn
     return 0;
 }
 
-/******************** NEURON IAF ******************************************** */
+/****************************** NEURON IAF ********************************** */
 // A basic leaky integrate-and-fire neuron.
 
 std::string NEURON_IAF::type(){
@@ -28,30 +28,36 @@ int NEURON_IAF::typesSynapsesSupported(){
 
 NEURON_IAF::NEURON_IAF(){
     V = 0;
-    Vth = 15;
-    Vrest = 0;
-    Vreset = 13.3;
+    V_th = 15;
+    V_rest = 0;
+    V_reset = 13.3;
     tau_m = 30;
     tau_ref = 2;
     C_m = 250;
-    Rin = 16.66667;
-    last_spiked = -tau_ref;
+    R_m = 16.66667;
+
+    g_plus = 0;     E_rev_plus = 115;   tau_syn_plus = 3;
+    g_minus = 0;    E_rev_minus = -10;  tau_syn_minus = 3;
+
+    last_spiked = -(tau_ref+1);
 }
 
-double NEURON_IAF::synEvolve(double _g, double _gs, double _tau_syn, double _dt){
-    return _g + _dt * ( - _g / _tau_syn ) + _gs;
+double NEURON_IAF::synRS(double _g, double _tau_syn){
+    return  - _g / _tau_syn;
 }
 
 int NEURON_IAF::evolve(double _current_time, double _dt, double _I, double*  _syn){
     if(_current_time < last_spiked + tau_ref){
-        V = Vreset;
+        V = V_reset;
     } else {
-        I_full = _I + \
-            synEvolve(g_plus, _syn[0], tau_syn_plus, _dt) * (Erev_plus - V) + \
-            synEvolve(g_minus, _syn[1], tau_syn_minus, _dt) * (Erev_minus - V);
-        V += _dt * ( - (V - Vrest) + Rin * I_full) / tau_m;
-        if(V >= Vth){ // spike
-            V = Vreset;
+        g_plus += _dt * synRS(g_plus, tau_syn_plus) + _syn[0];
+        g_minus += _dt * synRS(g_minus, tau_syn_minus) + _syn[1];
+        I_full = _I + g_plus * (E_rev_plus - V) + g_minus * (E_rev_minus - V);
+
+        V += _dt * ( - (V - V_rest) + R_m * I_full) / tau_m;
+
+        if(V >= V_th){ // spike
+            V = V_reset;
             last_spiked = _current_time;
             return 1;
         }

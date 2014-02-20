@@ -19,13 +19,13 @@ public:
 
 
 class NEURON_IAF: public NODE_TYPE{
-    double V, Vth, Vrest, Vreset, tau_ref, tau_m, C_m, last_spiked, Rin;
-    double Erev_plus, Erev_minus, tau_syn_plus, tau_syn_minus, g_plus, g_minus;
+    double V, V_th, V_rest, V_reset, tau_ref, tau_m, C_m, last_spiked, R_m;
+    double E_rev_plus, E_rev_minus, tau_syn_plus, tau_syn_minus, g_plus, g_minus;
     double I_full;
 
 public:
     NEURON_IAF();
-    double synEvolve(double _g, double _gs, double _tau_syn, double _dt);
+    double synRS(double _g, double _tau_syn);
     int typesSynapsesSupported();
     int evolve(double _current_time, double _dt, double _I, double*  _syn);
     std::string type();
