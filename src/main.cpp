@@ -3,7 +3,7 @@
 #include <vector>
 
 #include "core.h"
-#include "topology.h"
+// #include "topology.h"
 
 int main(int argc, char const *argv[]){
 
@@ -21,7 +21,7 @@ int main(int argc, char const *argv[]){
         node_array[i]->I_stim = 25;
     }
 
-    topology::randomTopologyOneDelay(node_array, 2, "synapse_static", 0.1, allsyn);
+    // topology::randomTopologyOneDelay(node_array, 2, "synapse_static", 0.1, allsyn);
 
     for (double t = 0; t < T_max+dt; t+=dt){
         for(int i=0; i < N; i++){
