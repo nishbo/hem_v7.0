@@ -22,13 +22,14 @@ int topology::randomTopologyOneDelay(std::vector<NODE*> _node_array, int _m,
     if( _m <= 0 )
         return 2;
     
-    std::default_random_engine generator;
-    std::uniform_int_distribution<int> distribution(0, _node_array.size()-1);
+    // std::default_random_engine generator;
+    // std::uniform_int_distribution<int> distribution(0, _node_array.size()-1);
 
     for(int i=0; i < _node_array.size(); i++){
         for(int j=0; j < _m; j++){
-            int k = distribution(generator);
-            std::cout<<"Connecting "<<i<<" to "<< k<<std::endl;
+            int k = rand() % _node_array.size();
+            // int k = distribution(generator);
+            std::cout<<"\nConnecting "<<i<<" to "<< k;
             connectN2N(_node_array[i], _class_name, \
                 _node_array[k], _delay, _allsyn);
         }

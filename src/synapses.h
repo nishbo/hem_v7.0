@@ -23,6 +23,8 @@ class SYNAPSE_STATIC: public SYNAPSE_TYPE{
     double weight;
     int excinh; // 0 exc, 1 inh
 public:
+    SYNAPSE_STATIC();
+
     std::string classNick();
     int setData(double* _arr);
     int type();

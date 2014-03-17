@@ -3,7 +3,7 @@
 
 #include "core.h"
 
-#include <random>
+// #include <random>
 
 namespace topology{
     int connectN2S(NODE* _from, SYNAPSE* _syn);

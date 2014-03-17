@@ -26,6 +26,11 @@ double NULL_SYNAPSE::postSpike(double _current_time){
 /******************** SYNAPSE STATIC **************************************** */
 // A static synapse that does not change weight.
 
+SYNAPSE_STATIC::SYNAPSE_STATIC(){
+    excinh = 0;
+    weight = 2;
+}
+
 std::string SYNAPSE_STATIC::classNick(){
     return "static_synapse";
 }

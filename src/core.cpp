@@ -38,7 +38,16 @@ int NODE::addIncomingSynapse (SYNAPSE* _synapse){
 }
 
 double NODE::evolve(double _current_time){
-    return node_ess->evolve(_current_time, dt, I_stim, inc_spikes->pull());
+    int _sp = node_ess->evolve(_current_time, dt, I_stim, inc_spikes->pull());
+
+    if( _sp ){
+        for (SYNAPSE* synapse : out_list)
+            synapse->preSpike(_current_time);
+        for (SYNAPSE* synapse : inc_list)
+            synapse->postSpike(_current_time);
+    }
+
+    return _sp * (out_list.size() + 1);
 }
 
 double NODE::addSpike(double _delay, double _weight, int _type){
@@ -51,7 +60,6 @@ double NODE::addSpike(double _delay, double _weight, int _type){
 SYNAPSE::SYNAPSE(std::string _class_name, NODE* _pn, double _d){
     postneu = _pn;
     delay = _d;
-
     if( _class_name.compare("synapse_static") == 0 ){
         syn_ess = new SYNAPSE_STATIC;
     } else if( _class_name.compare("null_node") == 0 ){
@@ -59,6 +67,7 @@ SYNAPSE::SYNAPSE(std::string _class_name, NODE* _pn, double _d){
     } else {
         syn_ess = new NULL_SYNAPSE;
     }
+    std::cout<<" created new "<<syn_ess->classNick();
 }
 
 double SYNAPSE::preSpike(double _current_time){
