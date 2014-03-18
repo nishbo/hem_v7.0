@@ -1,24 +1,24 @@
 #include "topology.h"
 
-int topology::connectN2S(NODE* _from, SYNAPSE* _syn){
-    return _from->addOutgoingSynapse(_syn);
+void topology::connectN2S(Node* preNeuron, Synapse* synapse){
+    preNeuron->addOutgoingSynapse(synapse);
 }
 
-SYNAPSE* topology::connectS2N(std::string _class_name, NODE* _to, double _delay, \
-        std::vector<SYNAPSE*> _allsyn){
-    SYNAPSE* buf = new SYNAPSE(_class_name, _to, _delay);
-    _allsyn.push_back(buf);
-    _to->addIncomingSynapse(buf);
+Synapse* topology::connectS2N(std::string class_name, Node* postNode,\
+    double delay, std::vector<Synapse*> allsyn){
+    Synapse* buf = new Synapse(class_name, postNode, delay);
+    allsyn.push_back(buf);
+    postNode->addIncomingSynapse(buf);
     return buf;
 }
 
-int topology::connectN2N(NODE* _from, std::string _class_name, NODE* _to, \
-        double _delay, std::vector<SYNAPSE*> _allsyn){
-    return connectN2S(_from, connectS2N(_class_name, _to, _delay, _allsyn));
+void topology::connectN2N(Node* _from, std::string _class_name, Node* _to, \
+        double _delay, std::vector<Synapse*> _allsyn){
+    connectN2S(_from, connectS2N(_class_name, _to, _delay, _allsyn));
 }
 
-int topology::randomTopologyOneDelay(std::vector<NODE*> _node_array, int _m, 
-        std::string _class_name, double _delay, std::vector<SYNAPSE*> _allsyn){
+int topology::randomTopologyOneDelay(std::vector<Node*> _node_array, int _m, 
+        std::string _class_name, double _delay, std::vector<Synapse*> _allsyn){
     if( _m <= 0 )
         return 2;
     

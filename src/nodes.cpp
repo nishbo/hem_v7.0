@@ -1,67 +1,75 @@
 #include "nodes.h"
 
-int NODE_TYPE::typesSynapsesSupported(){
-    return 0;
+
+void NodeType::forceSpike(double currentTime)
+{
+    lastSpiked = currentTime;
 }
 
 /****************************** NULL NODE *********************************** */
 // Class basically represents a node-filler that does nothing.
 
-std::string NULL_NODE::type(){
+std::string NullNode::type()
+{
     return "null_node";
 }
 
-int NULL_NODE::evolve(double _current_time, double _dt, double _I, double*  _syn){
+int NullNode::step(double currentTime, double dt, double I)
+{
     return 0;
 }
 
 /****************************** NEURON IAF ********************************** */
 // A basic leaky integrate-and-fire neuron.
 
-std::string NEURON_IAF::type(){
+std::string NeuronIaf::type()
+{
     return "neuron_liaf";
 }
 
-int NEURON_IAF::typesSynapsesSupported(){
-    return 2;
+NeuronIaf::NeuronIaf()
+{
+    V = 0.0;
+
+    _V_th = 15.0;
+    _V_rest = 0.0;
+    _V_reset = 13.3;
+    _tau_m = 30.0;
+    _tau_ref = 2.0;
+    _C_m = 250;
+    _R_m = 16.66667;
+
+    _g_plus = 0.0;  _E_rev_plus = 115.0;    _tau_syn_plus = 3.0;
+    _g_minus = 0.0; _E_rev_minus = -10.0;   _tau_syn_minus = 3.0;
+
+    lastSpiked = -(_tau_ref + 1.0);
 }
 
-NEURON_IAF::NEURON_IAF(){
-    V = 0;
-    V_th = 15;
-    V_rest = 0;
-    V_reset = 13.3;
-    tau_m = 30;
-    tau_ref = 2;
-    C_m = 250;
-    R_m = 16.66667;
+// double NeuronIaf::_synRS(double g, double tau_syn)
+// {
+//     return  - g / tau_syn;
+// }
 
-    g_plus = 0;     E_rev_plus = 115;   tau_syn_plus = 3;
-    g_minus = 0;    E_rev_minus = -10;  tau_syn_minus = 3;
+int NeuronIaf::step(double currentTime, double dt, double I)
+{
+    if (currentTime >= lastSpiked + _tau_ref){
+        // _g_plus += dt * _synRS(_g_plus, _tau_syn_plus) + syn[0];
+        // _g_minus += dt * _synRS(_g_minus, _tau_syn_minus) + syn[1];
+        // I_full = I + _g_plus * (_E_rev_plus - V) + _g_minus * (_E_rev_minus - V);
 
-    last_spiked = -(tau_ref+1);
-}
+        V += dt * ( - (V - _V_rest) + _R_m * I) / _tau_m;
 
-double NEURON_IAF::synRS(double _g, double _tau_syn){
-    return  - _g / _tau_syn;
-}
-
-int NEURON_IAF::evolve(double _current_time, double _dt, double _I, double*  _syn){
-    if(_current_time < last_spiked + tau_ref){
-        V = V_reset;
-    } else {
-        g_plus += _dt * synRS(g_plus, tau_syn_plus) + _syn[0];
-        g_minus += _dt * synRS(g_minus, tau_syn_minus) + _syn[1];
-        I_full = _I + g_plus * (E_rev_plus - V) + g_minus * (E_rev_minus - V);
-
-        V += _dt * ( - (V - V_rest) + R_m * I_full) / tau_m;
-
-        if(V >= V_th){ // spike
-            V = V_reset;
-            last_spiked = _current_time;
+        if (V >= _V_th){ // spike
+            V = _V_reset;
+            lastSpiked = currentTime;
             return 1;
         }
     }
     return 0;
 }
 
+void NeuronIaf::forceSpike(double currentTime)
+{
+    V = _V_reset;
+    lastSpiked = currentTime;
+}

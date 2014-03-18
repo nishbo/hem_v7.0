@@ -8,51 +8,79 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <functional>
 
 #include "nodes.h"
 #include "synapses.h"
 #include "cyctimbuf.h"
 
-class NODE;
-class SYNAPSE;
+class Node;
+class Synapse;
+class PsWave;
 
-class NODE{
-    NODE_TYPE* node_ess;        //essence of the node - defines it behavior
-    std::vector<SYNAPSE*> out_list; // list of outgoing synapses
-    std::vector<SYNAPSE*> inc_list; // list of incoming synapses
-
-    WIDE_CYCLING_TIME_BUFFER* inc_spikes; // incoming spikes are stored here
-
-    NODE(); // You do not want to create just a node! define it's type!
+class Node{
 public:
     static double dt;
-    static double max_delay;
     
-    double I_stim; // constant external stimulation
+    double I_stim;
+    double I_full;
 
-    // create and set functions:
-    NODE(std::string _class_name);
-    int setIncBuffer(); // sets buffer of incoming spikes based on dt and max_delay
-    int addOutgoingSynapse(SYNAPSE* _synapse); //add an outgoing synapse
-    int addIncomingSynapse(SYNAPSE* _synapse); //add an incoming synapse
+    Node(std::string className);
+    void initialiseSpikeBuffer(double maxDelay);
+    void addOutgoingSynapse(Synapse* synapse); //add an outgoing synapse
+    void addIncomingSynapse(Synapse* synapse); //add an incoming synapse
 
-    // simulation:
-    double evolve(double _current_time); //node evolves for dt
-    //spike arrives after _time with _weight amount :
-    double addSpike(double _delay, double _weight, int _type = 0); 
+    void addPsWaveType(PsWave newWave, std::string base, double modifier);
+
+    double step(double current_time); //node evolves for dt
+    void addSpike(double delay, double weight, int waveType = 0);
+
+private:
+    NodeType* _nodeEssentials;        //essence of the node - defines it behavior
+    std::vector<Synapse *> _outList; // list of outgoing synapses
+    std::vector<std::vector<Synapse *> > _incList; // list of incoming synapses
+    
+    std::vector<PsWave> _psWaves;
+    std::vector<std::string> _psBases;
+    std::vector<double> _psModifiers;
+
+    WideCyclingTimeBuffer _incSpikes; // incoming spikes are stored here
+
+    Node(); // You do not want to create just a node, define it's type.
 };
 
-class SYNAPSE{
-    NODE* postneu;  // postsynaptic neuron
-    SYNAPSE_TYPE* syn_ess;  // essence of the synapse - defines it evolve
-    double delay;   // some time-constant defined by length of synapse and speed 
-                    // of propagation of spike
 
-    SYNAPSE(); // You do not want to create just a synapse! define it's type!
+class PsWave
+{
 public:
-    SYNAPSE(std::string _class_name, NODE* _postneu, double _delay);
-    double preSpike(double _current_time); //signal of presynaptic spike
-    double postSpike(double _current_time); //signal of postsynaptic spike
+    PsWave(double tau1, double tau2=0.0);
+    double step(double dt, double weight);
+private:
+    int _type;
+    double _g;
+    double _g_dif;
+    double _tau1, _tau2;
+
+    double _stepExponential(double dt, double weight);
+    double _stepAlpha(double dt, double weight);
+    double _stepDoubleExponential(double dt, double weight);    
+};
+
+
+class Synapse{
+public:
+    Synapse(std::string className, Node* postNeuron, double delayg,\
+            int waveTypeg=0);
+    void preSpike(double currentTime); //signal of presynaptic spike
+    void postSpike(double currentTime); //signal of postsynaptic spike
+
+    int waveType;
+    double delay;
+private:
+    Node* _postNeuron;  // postsynaptic neuron
+    SynapseType* _synapseEssentials;  // essence of the synapse - defines it evolve
+
+    Synapse(); // You do not want to create just a synapse! define it's type!
 };
 
 #endif // CORE_H

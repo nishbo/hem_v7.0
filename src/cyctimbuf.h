@@ -3,34 +3,42 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <vector>
 
-#define EXIT_ERROR_CYCTIMBUF 996
-
-class CYCLING_TIME_BUFFER{
-    double *arr;
-    double timeturn;
-    double tstep;
-    int cur_pos;
-    int leng;
-    CYCLING_TIME_BUFFER();
-
-    static double bufd;
-    static int bufi;
+class CyclingTimeBuffer
+{
 public:
-    CYCLING_TIME_BUFFER(double _step, double _turn);
-    double pull();
-    double push(double _tdiffer, double _a);
-    double peep();
+    void init(double dt, double maxDelay);
+
+    double  pull();
+    void    push(double delay, double amplitude);
+    double  peep();
+
+private:
+    std::vector<double> _array;
+    double _maxDelay;
+    double _dt;
+    int _current_position;
+
+    void _localError(int localErrno, std::string localErrmsg);
+    void _localWarning(int localWarno, std::string localWarmsg);
 };
 
-class WIDE_CYCLING_TIME_BUFFER{
-    CYCLING_TIME_BUFFER* wide_arr;
-    int width;
+
+class WideCyclingTimeBuffer
+{
 public:
-    WIDE_CYCLING_TIME_BUFFER(double _step, double _turn, int _width);
-    double* pull();
-    double push(double _tdiffer, double _a, int _bufnum);
-    double peep(int _bufnum);
+    void init(double dt, double maxDelay, int width);
+
+    std::vector<double> pull();
+    void    push(double delay, double amplitude, int bufnum);
+    double  peep(int bufnum);
+
+private:
+    std::vector<CyclingTimeBuffer> _wideArray;
+    int _width;
+
+    void _localWarning(int localWarno, std::string localWarmsg);
 };
 
 

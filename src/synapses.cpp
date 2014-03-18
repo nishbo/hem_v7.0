@@ -1,54 +1,31 @@
 #include "synapses.h"
 
-int SYNAPSE_TYPE::type(){
+
+double SynapseType::preSpike(double _current_time){
     return 0;
 }
 
-int SYNAPSE_TYPE::setData(double* _arr){
-    return 1;
+void SynapseType::postSpike(double _current_time){
 }
 
 /******************** NULL SYNAPSE ****************************************** */
 // Class basically represents a synapse-filler that does nothing.
 
-std::string NULL_SYNAPSE::classNick(){
+std::string NullSynapse::getClassNick(){
     return "null_synapse";
-}
-
-double NULL_SYNAPSE::preSpike(double _current_time){
-    return 0;
-}
-
-double NULL_SYNAPSE::postSpike(double _current_time){
-    return 0;
 }
 
 /******************** SYNAPSE STATIC **************************************** */
 // A static synapse that does not change weight.
 
-SYNAPSE_STATIC::SYNAPSE_STATIC(){
-    excinh = 0;
-    weight = 2;
+SynapseStatic::SynapseStatic(){
+    _weight = 1.0;
 }
 
-std::string SYNAPSE_STATIC::classNick(){
+std::string SynapseStatic::getClassNick(){
     return "static_synapse";
 }
 
-int SYNAPSE_STATIC::setData(double* _arr){
-    excinh = _arr[0];
-    weight = _arr[1];
-    return 0;
-}
-
-int SYNAPSE_STATIC::type(){
-    return excinh;
-}
-
-double SYNAPSE_STATIC::preSpike(double _current_time){
-    return weight;
-}
-
-double SYNAPSE_STATIC::postSpike(double _current_time){
-    return weight;
+double SynapseStatic::preSpike(double _current_time){
+    return _weight;
 }

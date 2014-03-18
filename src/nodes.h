@@ -3,32 +3,41 @@
 
 #include <iostream>
 
-class NODE_TYPE{
+class NodeType
+{
 public:
-    virtual int typesSynapsesSupported();
-    virtual int evolve(double _current_time, double _dt, double _I, double*  _syn)=0;
+    double V;
+    double lastSpiked;
+
+    virtual void forceSpike(double current_time);
+
+    virtual int step(double current_time, double dt, double I)=0;
     virtual std::string type()=0;
 };
 
 
-class NULL_NODE: public NODE_TYPE{
+class NullNode: public NodeType
+{
 public:
-    int evolve(double _current_time, double _dt, double _I, double*  _syn);
+    int step(double current_time, double dt, double I);
     std::string type();
 };
 
 
-class NEURON_IAF: public NODE_TYPE{
-    double V, V_th, V_rest, V_reset, tau_ref, tau_m, C_m, last_spiked, R_m;
-    double E_rev_plus, E_rev_minus, tau_syn_plus, tau_syn_minus, g_plus, g_minus;
-    double I_full;
-
+class NeuronIaf: public NodeType
+{
 public:
-    NEURON_IAF();
-    double synRS(double _g, double _tau_syn);
-    int typesSynapsesSupported();
-    int evolve(double _current_time, double _dt, double _I, double*  _syn);
+    NeuronIaf();
+    int step(double current_time, double dt, double I);
+    void forceSpike(double current_time);
     std::string type();
+
+private:
+    // double _synRS(double g, double tau_syn);
+
+    double _V_th, _V_rest, _V_reset, _tau_ref, _tau_m, _C_m, _R_m;
+    double _E_rev_plus, _E_rev_minus, _tau_syn_plus, _tau_syn_minus;
+    double _g_plus, _g_minus, _last_spiked;
 };
 
 #endif // NODES_H

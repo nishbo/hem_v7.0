@@ -3,33 +3,28 @@
 
 #include <iostream>
 
-class SYNAPSE_TYPE{
+class SynapseType{
 public:
-    virtual std::string classNick()=0;
-    virtual int setData(double* _arr);
-    virtual int type();
-    virtual double preSpike(double _current_time)=0;
-    virtual double postSpike(double _current_time)=0;
+    virtual std::string getClassNick()=0;
+    virtual double preSpike(double current_time);
+    virtual void postSpike(double current_time);
 };
 
-class NULL_SYNAPSE: public SYNAPSE_TYPE{
+class NullSynapse: public SynapseType{
 public:
-    std::string classNick();
-    double preSpike(double _current_time);
-    double postSpike(double _current_time);
+    std::string getClassNick();
 };
 
-class SYNAPSE_STATIC: public SYNAPSE_TYPE{
-    double weight;
-    int excinh; // 0 exc, 1 inh
+class SynapseStatic: public SynapseType{
 public:
-    SYNAPSE_STATIC();
+    SynapseStatic();
 
-    std::string classNick();
-    int setData(double* _arr);
-    int type();
-    double preSpike(double _current_time);
-    double postSpike(double _current_time);
+    std::string getClassNick();
+    double preSpike(double current_time);
+    void postSpike(double current_time);
+    int waveType();
+private:
+    double _weight;
 };
 
 

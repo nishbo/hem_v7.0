@@ -1,81 +1,87 @@
 #include "cyctimbuf.h"
 
-double CYCLING_TIME_BUFFER::bufd = 0;
-int CYCLING_TIME_BUFFER::bufi = 0;
 
-CYCLING_TIME_BUFFER::CYCLING_TIME_BUFFER(double _step, double _turn){
-    tstep = _step;
-    timeturn = _turn;
-    leng = timeturn / tstep + 1;
-    if( leng <= 0 || tstep <= 0 ){
-        std::cout<<"\nError: Bad contruction of 'CYCLING_TIME_BUFFER'.\n";
-        std::cout<<"tstep = "<<tstep<<"; timeturn = "<<timeturn<<"; leng = ";
-        std::cout<<leng<<std::endl;
-        exit(EXIT_ERROR_CYCTIMBUF);
-    }
-    cur_pos = 0;
-    arr = new double[leng];
-    for(int i=0; i < leng; i++){
-        arr[i] = 0;
-    }
+void CyclingTimeBuffer::init(double dt, double maxDelay)
+{
+    _dt = dt;
+    _maxDelay = maxDelay;
+    _current_position = 0;
+
+    int l = _maxDelay / _dt + 1;
+    if (l <= 0.0 || _dt <= 0.0)
+        _localError(996, "Bad construction.");
+    _array = std::vector<double>(l, 0.0);
 }
 
-double CYCLING_TIME_BUFFER::pull(){
-    bufd = arr[cur_pos];
-    arr[cur_pos] = 0;
-    cur_pos++;
-    cur_pos %= leng;
+double CyclingTimeBuffer::pull()
+{
+    double bufd = _array[_current_position];
+
+    _array[_current_position] = 0.0;
+    _current_position++;
+    _current_position %= _array.size();
+
     return bufd;
 }
 
-double CYCLING_TIME_BUFFER::push(double _tdiffer, double _a){
-    if( _tdiffer > timeturn || _tdiffer < 0){
-        std::cout<<"Warning! 'CYCLING_TIME_BUFFER': ";
-        std::cout<<"Tried to push bad time '_tdiffer' = ";
-        std::cout<<"'"<<_tdiffer<<"'"<<std::endl;
-        return -1;
-    }
-    bufi = int( int( _tdiffer / tstep + 1e-8) + cur_pos ) % leng;
-    arr[bufi] += _a;
-    return arr[bufi];
+void CyclingTimeBuffer::push(double delay, double amplitude)
+{
+    if( delay > _maxDelay || delay < 0.0)
+        _localWarning(995, "Tried to push bad time.");
+
+    int bufi = int(delay/_dt + 1e-8 + _current_position) % _array.size();
+    _array[bufi] += amplitude;
 }
 
-double CYCLING_TIME_BUFFER::peep(){
-    return arr[cur_pos];
+double CyclingTimeBuffer::peep()
+{
+    return _array[_current_position];
 }
+
+void CyclingTimeBuffer::_localError(int localErrno, std::string localErrmsg)
+{
+    std::cout<<"\nError: Problems with 'CyclingTimeBuffer' #"<< localErrno;
+    std::cout<<"\nError message: "<< localErrmsg <<std::endl;
+    exit(errno);
+}
+
+void CyclingTimeBuffer::_localWarning(int localWarno, std::string localWarmsg)
+{
+    std::cout<<"\nWarning: Problems with 'CyclingTimeBuffer' #"<< localWarno;
+    std::cout<<"\nWarning message: "<< localWarmsg <<std::endl;
+}
+
 
 /**************************************************************************** */
-
-WIDE_CYCLING_TIME_BUFFER::WIDE_CYCLING_TIME_BUFFER(double _step, double _turn, \
-                                                    int _width){
-    width = _width;
-    if( width <= 0 ){
-        wide_arr = nullptr;
-        return;
+void WideCyclingTimeBuffer::init(double dt, double maxDelay, int width)
+{
+    _width = width;
+    _wideArray = std::vector<CyclingTimeBuffer>();
+    for(int i=0; i < _width; i++){
+        _wideArray.push_back(CyclingTimeBuffer());
+        _wideArray[-1].init(dt, maxDelay);
     }
-
-    wide_arr = (CYCLING_TIME_BUFFER*)std::malloc( \
-        width * sizeof(CYCLING_TIME_BUFFER));
-    for(int i=0; i < width; i++)
-        wide_arr[i] = CYCLING_TIME_BUFFER( _step, _turn);
 }
 
-double* WIDE_CYCLING_TIME_BUFFER::pull(){
-    if( width <= 0 )
-        return nullptr;
-
-    double* arr = new double[width];
-    for(int i=0; i < width; i++)
-        arr[i] = wide_arr[i].pull();
-    return arr;
+std::vector<double> WideCyclingTimeBuffer::pull()
+{
+    std::vector<double> a;
+    for(int i=0; i < _width; i++)
+        a.push_back(_wideArray[i].pull());
+    return a;
 }
 
-double WIDE_CYCLING_TIME_BUFFER::push(double _tdiffer, double _a, int _bufnum){
-    if( _bufnum >= width || _bufnum < 0){
-        std::cout<<"Warning! 'WIDE_CYCLING_TIME_BUFFER': ";
-        std::cout<<"Tried to push in wrong '_bufnum' = ";
-        std::cout<<"'"<<_bufnum<<"'"<<std::endl;
-        return -1;
-    }
-    return wide_arr[_bufnum].push(_tdiffer, _a);
+void WideCyclingTimeBuffer::push(double delay, double amplitude, int bufnum)
+{
+    if (bufnum >= _width || bufnum < 0)
+        _localWarning(994, "Tried to push in wrong bufnum.");
+    _wideArray[bufnum].push(delay, amplitude);
+}
+
+void WideCyclingTimeBuffer::_localWarning(int localWarno,
+                                          std::string localWarmsg)
+{
+    std::cout<<"\nWarning: Problems with 'WideCyclingTimeBuffer' #";
+    std::cout<< localWarno;
+    std::cout<<"\nWarning message: "<< localWarmsg <<std::endl;
 }
