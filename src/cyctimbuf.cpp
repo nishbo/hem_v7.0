@@ -42,7 +42,7 @@ void CyclingTimeBuffer::_localError(int localErrno, std::string localErrmsg)
 {
     std::cout<<"\nError: Problems with 'CyclingTimeBuffer' #"<< localErrno;
     std::cout<<"\nError message: "<< localErrmsg <<std::endl;
-    exit(errno);
+    exit(localErrno);
 }
 
 void CyclingTimeBuffer::_localWarning(int localWarno, std::string localWarmsg)

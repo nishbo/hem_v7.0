@@ -33,8 +33,6 @@ public:
     std::string type();
 
 private:
-    // double _synRS(double g, double tau_syn);
-
     double _V_th, _V_rest, _V_reset, _tau_ref, _tau_m, _C_m, _R_m;
     double _E_rev_plus, _E_rev_minus, _tau_syn_plus, _tau_syn_minus;
     double _g_plus, _g_minus, _last_spiked;

@@ -45,18 +45,9 @@ NeuronIaf::NeuronIaf()
     lastSpiked = -(_tau_ref + 1.0);
 }
 
-// double NeuronIaf::_synRS(double g, double tau_syn)
-// {
-//     return  - g / tau_syn;
-// }
-
 int NeuronIaf::step(double currentTime, double dt, double I)
 {
     if (currentTime >= lastSpiked + _tau_ref){
-        // _g_plus += dt * _synRS(_g_plus, _tau_syn_plus) + syn[0];
-        // _g_minus += dt * _synRS(_g_minus, _tau_syn_minus) + syn[1];
-        // I_full = I + _g_plus * (_E_rev_plus - V) + _g_minus * (_E_rev_minus - V);
-
         V += dt * ( - (V - _V_rest) + _R_m * I) / _tau_m;
 
         if (V >= _V_th){ // spike
