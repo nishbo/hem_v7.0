@@ -38,7 +38,7 @@ public:
 private:
     NodeType* _nodeEssentials;        //essence of the node - defines it behavior
     std::vector<Synapse *> _outList; // list of outgoing synapses
-    std::vector<std::vector<Synapse *> > _incList; // list of incoming synapses
+    std::vector<Synapse *> _incList; // list of incoming synapses
     
     std::vector<PsWave> _psWaves;
     std::vector<std::string> _psBases;
@@ -69,15 +69,14 @@ private:
 
 class Synapse{
 public:
-    Synapse(std::string className, Node* postNeuron, double delayg,\
-            int waveTypeg=0);
+    Synapse(std::string className, Node* postNode);
     void preSpike(double currentTime); //signal of presynaptic spike
     void postSpike(double currentTime); //signal of postsynaptic spike
 
     int waveType;
     double delay;
 private:
-    Node* _postNeuron;  // postsynaptic neuron
+    Node* _postNode;  // postsynaptic neuron
     SynapseType* _synapseEssentials;  // essence of the synapse - defines it evolve
 
     Synapse(); // You do not want to create just a synapse! define it's type!

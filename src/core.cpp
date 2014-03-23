@@ -30,17 +30,13 @@ void Node::addOutgoingSynapse(Synapse* synapse)
 
 void Node::addIncomingSynapse(Synapse* synapse)
 {
-    if (synapse->waveType < _psWaves.size())
-        exit(1323);
-
-    _incList[synapse->waveType].push_back(synapse);
+    _incList.push_back(synapse);
 }
 
 void Node::addPsWaveType(PsWave newWave, std::string base, double modifier){
     _psWaves.push_back(newWave);
     _psBases.push_back(base);
     _psModifiers.push_back(modifier);
-    _incList.push_back(std::vector<Synapse *>());
 }
 
 double Node::step(double current_time){
@@ -61,9 +57,8 @@ double Node::step(double current_time){
     if (sp){
         for (auto synapse : _outList)
             synapse->preSpike(current_time);
-        for (auto v : _incList)
-            for (auto synapse : v)
-                synapse->postSpike(current_time);
+        for (auto synapse : _incList)
+            synapse->postSpike(current_time);
     }
 
     return sp;
@@ -136,11 +131,12 @@ double PsWave::_stepDoubleExponential(double dt, double weight){
 
 
 /******************************* Synapse ************************************ */
-Synapse::Synapse(std::string className, Node* postNeuron, double delayg,\
-                 int waveTypeg){
-    _postNeuron = postNeuron;
-    delay = delayg;
-    waveType = waveTypeg;
+Synapse::Synapse(std::string className, Node* postNode){
+    _postNode = postNode;
+
+    delay = _postNode->dt;
+    waveType = 0;
+    
     if (className.compare("synapse_static") == 0){
         _synapseEssentials = new SynapseStatic;
     } else if(className.compare("null_node") == 0){
@@ -152,7 +148,7 @@ Synapse::Synapse(std::string className, Node* postNeuron, double delayg,\
 }
 
 void Synapse::preSpike(double currentTime){
-    _postNeuron->addSpike(delay, _synapseEssentials->preSpike(currentTime), \
+    _postNode->addSpike(delay, _synapseEssentials->preSpike(currentTime), \
         waveType);
 }
 

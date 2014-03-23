@@ -10,10 +10,12 @@ public:
     virtual void postSpike(double current_time);
 };
 
+
 class NullSynapse: public SynapseType{
 public:
     std::string getClassNick();
 };
+
 
 class SynapseStatic: public SynapseType{
 public:
@@ -21,8 +23,6 @@ public:
 
     std::string getClassNick();
     double preSpike(double current_time);
-    void postSpike(double current_time);
-    int waveType();
 private:
     double _weight;
 };
