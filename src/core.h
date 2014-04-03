@@ -35,6 +35,8 @@ public:
     double step(double current_time); //node evolves for dt
     void addSpike(double delay, double weight, int waveType = 0);
 
+    void announceConnections();
+
 private:
     NodeType* _nodeEssentials;        //essence of the node - defines it behavior
     std::vector<Synapse *> _outList; // list of outgoing synapses
@@ -80,6 +82,13 @@ private:
     SynapseType* _synapseEssentials;  // essence of the synapse - defines it evolve
 
     Synapse(); // You do not want to create just a synapse! define it's type!
+};
+
+
+struct Spike{
+    Node* node;
+    double sptime;
+    Spike(double _time, Node* _node);
 };
 
 #endif // CORE_H

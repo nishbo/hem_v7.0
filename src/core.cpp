@@ -41,7 +41,6 @@ void Node::addPsWaveType(PsWave newWave, std::string base, double modifier){
 
 double Node::step(double current_time){
     std::vector<double> v = _incSpikes.pull();
-
     I_full = I_stim;
     for (int i=0; i < v.size(); i++){
         if (_psBases[i].compare("current") == 0){
@@ -68,6 +67,17 @@ void Node::addSpike(double delay, double weight, int waveType){
     _incSpikes.push(delay, weight, waveType);
 }
 
+void Node::announceConnections()
+{
+    std::cout<<"\nIncoming synapses\n";
+    for (auto synapse : _incList){
+        std::cout<< synapse<<"   ";
+    }
+    std::cout<<"\nOutgoing synapses\n";
+    for (auto synapse : _outList){
+        std::cout<< synapse<<"   ";
+    }
+}
 
 /******************************* PsWave ************************************* */
 PsWave::PsWave(double tau1, double tau2){
@@ -144,7 +154,6 @@ Synapse::Synapse(std::string className, Node* postNode){
     } else {
         _synapseEssentials = new NullSynapse;
     }
-    std::cout<<" created new "<<_synapseEssentials->getClassNick();
 }
 
 void Synapse::preSpike(double currentTime){
@@ -154,4 +163,11 @@ void Synapse::preSpike(double currentTime){
 
 void Synapse::postSpike(double currentTime){
     _synapseEssentials->postSpike(currentTime);
+}
+
+
+Spike::Spike(double _time, Node* _node)
+{
+    sptime = _time;
+    node = _node;
 }

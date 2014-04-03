@@ -1,41 +1,27 @@
 #ifndef OUTPUT_H
 #define OUTPUT_H
 
-#include <set>
-#include <cstdio>
+// #include <sstream>
+#include <fstream>
 
 #include "core.h"
 
-struct _Spike{
-    int nn;
-    double sptime;
-    _Spike(double _time, int _nn);
-};
-
 class Output{
 public:
-    Output(std::vector<std::string> lines);
-    ~Output();
+    void push(double time, Node* node);
 
-    int push_spike(double time, int nn);
-    // int add_output(std::string line);
-    // int add_output(std::vector<std::string> lines);
+    void print();
 
-    int save_spikes_trigger();
-    int save_potentials_trigger(std::vector<Node*> n);
-    int save_weights_trigger(std::vector<Synapse*> n);
-
-    int print();
+    void openSpikeFile(std::string filename="data/spikes.txt");
+    void closeSpikeFile();
 
 private:
-    std::set<std::string> currently_printing;
-    std::vector<_Spike> spike_buffer;
+    std::vector<Spike> _spikes;
 
-    std::vector<Node*> node_array;
-    std::vector<Synapse*> allsyn;
+    std::vector<Node *> _nodes;
+    std::vector<Synapse *> _synapses;
 
-    FILE* spikes;
-    FILE* potentials;
+    std::ofstream _spikeFile;
 };
 
 

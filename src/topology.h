@@ -13,9 +13,8 @@ namespace topology{
 
     Synapse* connectN2N(Node* preNode, Node* postNode, std::string className);
 
-    std::vector<Synapse *> randomTopology(\
-        std::vector<Node *> nodes, std::string className,\
-        int connectionsPerNeuron);
+    std::vector<Synapse *> randomTopology(std::vector<Node *> nodes,\
+        std::string className, int connectionsPerNeuron);
 
     // void connectN2N(Node* _from, std::string _class_name, Node* _to, \
     //     double _delay, std::vector<Synapse*> _allsyn);

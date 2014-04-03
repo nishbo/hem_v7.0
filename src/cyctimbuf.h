@@ -5,6 +5,7 @@
 #include <iostream>
 #include <vector>
 
+
 class CyclingTimeBuffer
 {
 public:
@@ -13,6 +14,8 @@ public:
     double  pull();
     void    push(double delay, double amplitude);
     double  peep();
+
+    ~CyclingTimeBuffer () = default;
 
 private:
     std::vector<double> _array;
@@ -33,13 +36,13 @@ public:
     std::vector<double> pull();
     void    push(double delay, double amplitude, int bufnum);
     double  peep(int bufnum);
+    
+    ~WideCyclingTimeBuffer () = default;
 
 private:
     std::vector<CyclingTimeBuffer> _wideArray;
-    int _width;
 
     void _localWarning(int localWarno, std::string localWarmsg);
 };
-
 
 #endif // CYCTIMBUF_H
