@@ -18,6 +18,10 @@ Node::Node(std::string class_name)
     I_full = 0.0;
 }
 
+double Node::V(){
+    return _nodeEssentials->V;
+}
+
 void Node::initialiseSpikeBuffer(double maxDelay)
 {
     _incSpikes.init(dt, maxDelay, _psWaves.size());
@@ -42,7 +46,7 @@ void Node::addPsWaveType(PsWave newWave, std::string base, double modifier){
 double Node::step(double current_time){
     std::vector<double> v = _incSpikes.pull();
     I_full = I_stim;
-    for (int i=0; i < v.size(); i++){
+    for (unsigned i=0; i < v.size(); i++){
         if (_psBases[i].compare("current") == 0){
             I_full += _psModifiers[i] * _psWaves[i].step(dt, v[i]);
         } else if (_psBases[i].compare("conductance") == 0){
@@ -166,8 +170,8 @@ void Synapse::postSpike(double currentTime){
 }
 
 
-Spike::Spike(double _time, Node* _node)
+Spike::Spike(double spt, int spnode_number)
 {
-    sptime = _time;
-    node = _node;
+    t = spt;
+    node_number = spnode_number;
 }

@@ -8,6 +8,7 @@ export
 import
 hem
 hem.exe
+plots
 *.sublime-project
 *.sublime-workspace
 

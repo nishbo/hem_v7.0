@@ -15,6 +15,11 @@ double drand()
 }
 
 
+bool isPeriodNow(double t, double period, double dt)
+{
+    return (t - (floor((t + dt*0.001)/period) * period)) < dt * 0.05;
+}
+
 int main(int argc, char const *argv[])
 {
     srand(time(NULL));
@@ -42,22 +47,23 @@ int main(int argc, char const *argv[])
     // }
 
 
-    double timeMax = 1.0;
+    double timeMax = 1000.0;
     double dt = 0.1;
+    double dumpPeriod = 5.0;
 
     Node::dt = dt;
 
     std::vector<Node *> nodes;
     std::vector<Synapse *> synapses;
 
-    for (int i=0; i < 2; i++){
+    for (int i=0; i < 1000; i++){
         nodes.push_back(new Node("neuron_liaf"));
-        nodes.back()->I_stim = 50.0 * (0.5 + drand());
+        nodes.back()->I_stim = 20.0 * (0.5 + drand());
         nodes.back()->addPsWaveType(PsWave(3.0), "current", 1.0);
         nodes.back()->initialiseSpikeBuffer(0.3);
     }
 
-    synapses = topology::randomTopology(nodes, "synapse_static", 2);
+    synapses = topology::randomTopology(nodes, "synapse_static", 50);
 
     // std::cout<<"\ntesting created connections\n";
 
@@ -69,18 +75,25 @@ int main(int argc, char const *argv[])
 
     Output output;
     output.openSpikeFile();
+    output.openPotentialFile();
+    output.nodes = nodes;
 
-    for(double t = 0.0; t < timeMax; t += dt){
-        std::cout<<"t "<<t<< std::endl;
-        for (auto node : nodes){
-            if (node->step(t)){
-                std::cout<<"Node "<<node<<" spiked."<< std::endl;
-                output.push(t, node);
+    for (double t = 0.0; t < timeMax; t += dt){
+        // std::cout<<"t "<<t<< std::endl;
+        for (unsigned i=0; i<nodes.size(); i++){
+            if (nodes.at(i)->step(t)){
+                // std::cout<<"Node "<<i<<" spiked."<< std::endl;
+                output.push(t, i);
             }
         }
+        if (isPeriodNow(t, dumpPeriod, dt)){
+            output.print(t);
+        }
+        std::cout<<"Finished "<< t / timeMax <<" of the simulation.\r";
     }
-    output.print();
-    output.closeSpikeFile();
+    std::cout<<std::endl;
+    // output.print();
+    output.close();
 
 
     // int N = 10;

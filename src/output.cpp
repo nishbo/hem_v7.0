@@ -62,7 +62,7 @@
 
 void Output::openSpikeFile(std::string filename)
 {
-    _spikeFile.open(filename, std::ofstream::out);
+    _spikeFile.open(filename.c_str(), std::ofstream::out);
 }
 
 void Output::closeSpikeFile()
@@ -70,17 +70,48 @@ void Output::closeSpikeFile()
     _spikeFile.close();
 }
 
+void Output::openPotentialFile(std::string filename)
+{
+    _potentialFile.open(filename.c_str(), std::ofstream::out);
+}
+
+void Output::closePotentialFile()
+{
+    _potentialFile.close();
+}
+
+void Output::close()
+{
+    if (_spikeFile)
+        closeSpikeFile();
+    if (_potentialFile)
+        closePotentialFile();
+}
+
 void Output::print()
 {
     if (_spikeFile){
-        for (auto& i : _spikes){
-            _spikeFile << i.sptime <<" "<< i.node <<"\n";
+        for (auto& spike : _spikes){
+            _spikeFile << spike.t <<" "<< spike.node_number <<"\n";
         }
         _spikes.clear();
     }
 }
 
-void Output::push(double sptime, Node* node)
+void Output::print(double t)
 {
-    _spikes.push_back(Spike(sptime, node));
+    print();
+
+    if (_potentialFile){
+        _potentialFile <<"Time = "<< t <<" ms\n";
+        for (auto node : nodes){
+            _potentialFile << node->V()<<" ";
+        }
+        _potentialFile <<std::endl;
+    }
+}
+
+void Output::push(double t, int node_number)
+{
+    _spikes.push_back(Spike(t, node_number));
 }

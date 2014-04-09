@@ -25,6 +25,8 @@ public:
     double I_stim;
     double I_full;
 
+    double V();
+
     Node(std::string className);
     void initialiseSpikeBuffer(double maxDelay);
     void addOutgoingSynapse(Synapse* synapse); //add an outgoing synapse
@@ -86,9 +88,9 @@ private:
 
 
 struct Spike{
-    Node* node;
-    double sptime;
-    Spike(double _time, Node* _node);
+    int node_number;
+    double t;
+    Spike(double spt, int spnode_number);
 };
 
 #endif // CORE_H
