@@ -1,5 +1,6 @@
 import pylab
 import os
+import numpy.fft
 
 
 data_dir = 'data'
@@ -238,7 +239,7 @@ def calculate_activity_histogram(spikes, total_neurons, bin=0.1):
 
 def analyse_bursts(spikes, total_neurons):
     activity_hist, bins = calculate_activity_histogram(spikes, total_neurons,
-                                                       bin=0.1)
+                                                       bin=1.)
     activity_median = pylab.median(activity_hist)
     activity_mean = pylab.mean(activity_hist)
     print activity_median, activity_mean
@@ -247,8 +248,8 @@ def analyse_bursts(spikes, total_neurons):
     pylab.plot(bins, [activity_median for _ in bins], 'r')
     pylab.plot(bins, [activity_mean for _ in bins], 'b')
 
-    FFT = abs(pylab.rfft(activity_hist))
-    freqs = pylab.rfftfreq(len(activity_hist), bins[1] - bins[0])
+    FFT = abs(numpy.fft.rfft(activity_hist))
+    freqs = numpy.fft.rfftfreq(len(activity_hist), bins[1] - bins[0])
     pylab.figure(11)
     for i in xrange(len(FFT)):
         if i < 20:
