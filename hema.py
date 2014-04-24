@@ -251,7 +251,12 @@ def analyse_bursts(spikes, total_neurons):
     freqs = pylab.rfftfreq(len(activity_hist), bins[1] - bins[0])
     pylab.figure(11)
     for i in xrange(len(FFT)):
-        FFT[i] = sum(FFT[i-20:i+20])/40.
+        if i < 20:
+            FFT[i] = sum(FFT[0:40])/40.
+        elif i > len(FFT) - 21:
+            FFT[i] = sum(FFT[len(FFT) - 21:])/40.
+        else:
+            FFT[i] = sum(FFT[i-20:i+20])/40.
     pylab.plot(freqs, FFT)
 
 
@@ -273,8 +278,8 @@ def main():
     synaptic_currents = None
 
     spikes = extract_spike_data()
-    plot_spike_rastr(spikes)
-    # plot_spike_histogram(spikes, bin=10., total_neurons=total_neurons)
+    # plot_spike_rastr(spikes)
+    plot_spike_histogram(spikes, bin=10., total_neurons=total_neurons)
 
     # potentials = extract_potential_data()
     # plot_neuron_potential(potentials, 0)
@@ -292,8 +297,8 @@ def main():
     # fn = plot_average_synapse_data(synaptic_data, 0)
     # plot_average_synapse_data(synaptic_data, 1, fignum=fn)
 
-    synaptic_currents = extract_synaptic_currents()
-    plot_synaptic_currents(synaptic_currents)
+    # synaptic_currents = extract_synaptic_currents()
+    # plot_synaptic_currents(synaptic_currents)
     # plot_synaptic_current(synaptic_currents, 1)
 
     analyse_bursts(spikes, total_neurons)
