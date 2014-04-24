@@ -1,14 +1,14 @@
 #ifndef CORE_H
 #define CORE_H
 
-#ifndef Malloc
-#define Malloc(n,t) (t*)std::malloc((n)*sizeof(t))
-#endif // Malloc
+// #ifndef Malloc
+// #define Malloc(n,t) (t*)std::malloc((n)*sizeof(t))
+// #endif // Malloc
 
 #include <iostream>
 #include <string>
 #include <vector>
-#include <functional>
+// #include <functional>
 
 #include "nodes.h"
 #include "synapses.h"
@@ -31,6 +31,8 @@ public:
     void initialiseSpikeBuffer(double maxDelay);
     void addOutgoingSynapse(Synapse* synapse); //add an outgoing synapse
     void addIncomingSynapse(Synapse* synapse); //add an incoming synapse
+
+    void setPreset(int setNumber);
 
     void addPsWaveType(PsWave newWave, std::string base, double modifier);
 
@@ -76,6 +78,13 @@ public:
     Synapse(std::string className, Node* postNode);
     void preSpike(double currentTime); //signal of presynaptic spike
     void postSpike(double currentTime); //signal of postsynaptic spike
+
+    double weight();
+
+    void setPreset(int setNumber);
+    void reset();
+
+    std::vector<double> data();
 
     int waveType;
     double delay;

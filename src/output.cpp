@@ -1,64 +1,13 @@
 #include "output.h"
 
-
-// int Output::add_output(std::string line){
-//     if (! currently_printing.count(line)){
-//         std::cout<<" adding new line "<< line << std::endl;
-//         currently_printing.insert(line);
-//     } else {
-//         std::cout<<" tried to import line that existed "<< line << std::endl;
-//         return 2;
-//     }
-
-//     if (line.compare("spikes") == 0){
-//         spikes = fopen("data/spikes.txt", "w");
-//         return 0;
-//     } else if (line.compare("potentials") == 0){
-//         potentials = fopen("data/potentials.txt", "w");
-//         return 0;
-//     }
-
-//     return 1;
-// }
-
-// int Output::add_output(std::vector<std::string> lines){
-//     int buf = 0;
-//     for(std::string line : lines)
-//         buf += add_output(line);
-//     return buf;
-// }
-
-// int Output::save_spikes_trigger(){
-//     // if( spikes ){
-//     //     spikes.close();
-//     //     return 0;
-//     // } else {
-//         spikes = fopen("data/spikes.txt", "w");
-//         return 1;
-//     // }
-// }
-
-// int Output::save_potentials_trigger(std::vector<Node*> n){
-//     // if( potentials ){
-//     //     potentials.close();
-//     //     return 0;
-//     // } else {
-//         potentials = fopen("data/potentials.txt", "w");
-//         node_array = n;
-//         return 1;
-//     // }
-// }
-
-// int Output::save_weights_trigger(std::vector<Synapse*> allsyn){
-//     // if( potentials ){
-//     //     potentials.close();
-//     //     return 0;
-//     // } else {
-//         potentials = fopen("data/potentials.txt", "w");
-//         // node_array = n;
-//         return 1;
-//     // }
-// }
+void Output::open()
+{
+    openSpikeFile();
+    openPotentialFile();
+    openSynapticWeightFile();
+    openSynapticDataFile();
+    openSynapticCurrentFile();
+}
 
 void Output::openSpikeFile(std::string filename)
 {
@@ -80,17 +29,53 @@ void Output::closePotentialFile()
     _potentialFile.close();
 }
 
+void Output::openSynapticCurrentFile(std::string filename)
+{
+    _synapticCurrentFile.open(filename.c_str(), std::ofstream::out);
+}
+
+void Output::closeSynapticCurrentFile()
+{
+    _synapticCurrentFile.close();
+}
+
+void Output::openSynapticWeightFile(std::string filename)
+{
+    _synapticWeightFile.open(filename.c_str(), std::ofstream::out);
+}
+
+void Output::closeSynapticWeightFile()
+{
+    _synapticWeightFile.close();
+}
+
+void Output::openSynapticDataFile(std::string filename)
+{
+    _synapticDataFile.open(filename.c_str(), std::ofstream::out);
+}
+
+void Output::closeSynapticDataFile()
+{
+    _synapticDataFile.close();
+}
+
 void Output::close()
 {
-    if (_spikeFile)
+    if (_spikeFile.is_open())
         closeSpikeFile();
-    if (_potentialFile)
+    if (_potentialFile.is_open())
         closePotentialFile();
+    if (_synapticWeightFile.is_open())
+        closeSynapticWeightFile();
+    if (_synapticDataFile.is_open())
+        closeSynapticDataFile();
+    if (_synapticCurrentFile.is_open())
+        closeSynapticCurrentFile();
 }
 
 void Output::print()
 {
-    if (_spikeFile){
+    if (_spikeFile.is_open()){
         for (auto& spike : _spikes){
             _spikeFile << spike.t <<" "<< spike.node_number <<"\n";
         }
@@ -98,11 +83,9 @@ void Output::print()
     }
 }
 
-void Output::print(double t)
+void Output::printPotentials(double t)
 {
-    print();
-
-    if (_potentialFile){
+    if (_potentialFile.is_open()){
         _potentialFile <<"Time = "<< t <<" ms\n";
         for (auto node : nodes){
             _potentialFile << node->V()<<" ";
@@ -111,7 +94,64 @@ void Output::print(double t)
     }
 }
 
+void Output::printSynapticCurrents(double t)
+{
+    if (_synapticCurrentFile.is_open()){
+        _synapticCurrentFile <<"Time = "<< t <<" ms\n";
+        for (auto node : nodes){
+            _synapticCurrentFile << node->I_full - node->I_stim<<" ";
+        }
+        _synapticCurrentFile <<std::endl;
+    }
+}
+
+void Output::printSynapticWeights(double t)
+{
+    if (_synapticWeightFile.is_open()){
+        _synapticWeightFile <<"Time = "<< t <<" ms\n";
+        for (auto synapse : synapses){
+            _synapticWeightFile << synapse->weight()<<" ";
+        }
+        _synapticWeightFile <<std::endl;
+    }
+}
+
+void Output::printSynapticData(double t)
+{
+    if (_synapticDataFile.is_open()){
+        _synapticDataFile <<"Time = "<< t <<" ms\n";
+        for (auto synapse : synapses){
+            for (auto& i : synapse->data()){
+                _synapticDataFile << i << " ";
+            }
+            _synapticDataFile << "\n";
+        }
+        _synapticDataFile <<std::endl;
+    }
+}
+
+void Output::print(double t)
+{
+    print();
+    printPotentials(t);
+    printSynapticWeights(t);
+    printSynapticData(t);
+    printSynapticCurrents(t);
+}
+
 void Output::push(double t, int node_number)
 {
     _spikes.push_back(Spike(t, node_number));
 }
+
+void Output::printEssentialData(double length, std::string filename)
+{
+    std::ofstream f;
+    f.open(filename.c_str(), std::ofstream::out);
+    f<<"Amount_of_neurons "<< nodes.size()<<std::endl;
+    f<<"Amount_of_synapses "<< synapses.size()<<std::endl;
+    f<<"Timelength_of_simulation "<< length <<std::endl;
+    f<<"dt "<< Node::dt;
+    f.close();
+}
+

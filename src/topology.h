@@ -6,22 +6,16 @@
 // #include <random>
 
 namespace topology{
-    // void connectN2S(Node* preNode, Synapse* synapse);
-
-    // Synapse* connectS2N(std::string class_name, Node* postNode, double delay, \
-    //     std::vector<Synapse*> allsyn);
 
     Synapse* connectN2N(Node* preNode, Node* postNode, std::string className);
 
     std::vector<Synapse *> randomTopology(std::vector<Node *> nodes,\
-        std::string className, int connectionsPerNeuron);
+        std::string className, int connectionsPerNeuron, int waveType=0);
 
-    // void connectN2N(Node* _from, std::string _class_name, Node* _to, \
-    //     double _delay, std::vector<Synapse*> _allsyn);
+    std::vector<Synapse *> randomTopology(std::vector<Node *> nodes_from,\
+        std::vector<Node *> nodes_to,\
+        std::string className, int connectionsPerNeuron, int waveType=0);
 
-    // int randomTopologyOneDelay(std::vector<Node*> _node_array, int _m, \
-    //     std::string _class_name, double _delay, \
-    //     std::vector<Synapse*> _allsyn);
 }
 
 

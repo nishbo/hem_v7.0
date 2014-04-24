@@ -10,6 +10,7 @@ public:
     double lastSpiked;
 
     virtual void forceSpike(double current_time);
+    virtual void setPreset(int setNumber);
 
     virtual int step(double current_time, double dt, double I)=0;
     virtual std::string type()=0;
@@ -31,10 +32,23 @@ public:
     int step(double current_time, double dt, double I);
     void forceSpike(double current_time);
     std::string type();
+    void setPreset(int setNumber);
 
 private:
     double _V_th, _V_rest, _V_reset, _tau_ref, _tau_m, _C_m, _R_m;
-    double _last_spiked;
+};
+
+
+class NodePeriodicGenerator: public NodeType
+{
+public:
+    NodePeriodicGenerator();
+    int step(double current_time, double dt, double I);
+    void forceSpike(double current_time);
+    std::string type();
+
+private:
+    double _period;
 };
 
 #endif // NODES_H
