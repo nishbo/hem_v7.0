@@ -1,10 +1,6 @@
 #ifndef CORE_H
 #define CORE_H
 
-// #ifndef Malloc
-// #define Malloc(n,t) (t*)std::malloc((n)*sizeof(t))
-// #endif // Malloc
-
 #include <iostream>
 #include <string>
 #include <vector>

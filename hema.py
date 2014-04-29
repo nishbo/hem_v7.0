@@ -524,11 +524,11 @@ def main():
     # plot_neuron_potentials(potentials)
     # plot_average_neuron_potential(potentials)
 
-    # synaptic_weights = extract_synaptic_weigths()
-    # plot_synaptic_weight_histogram(synaptic_weights)
-    # plot_synaptic_weight_histogram(synaptic_weights,
-    #                                number=len(synaptic_weights)-1)
-    # plot_average_synaptic_weight(synaptic_weights)
+    synaptic_weights = extract_synaptic_weigths()
+    plot_synaptic_weight_histogram(synaptic_weights)
+    plot_synaptic_weight_histogram(synaptic_weights,
+                                   number=len(synaptic_weights)-1)
+    plot_average_synaptic_weight(synaptic_weights)
 
     # synaptic_data = extract_synaptic_data(total_synapses)
     # plot_synapse_data(synaptic_data)
@@ -539,12 +539,12 @@ def main():
     # plot_synaptic_currents(synaptic_currents)
     # plot_synaptic_current(synaptic_currents, 1)
 
-    bins, activity_hist, bursts = get_bursts(
-        spikes, total_neurons, time_max)
+    # bins, activity_hist, bursts = get_bursts(
+        # spikes, total_neurons, time_max)
 
-    plot_found_bursts(bins, activity_hist, bursts)
-    IBIs = calculate_IBIs(bins, bursts)
-    plot_IBIs_histogram(IBIs, bins=5)
+    # plot_found_bursts(bins, activity_hist, bursts)
+    # IBIs = calculate_IBIs(bins, bursts)
+    # plot_IBIs_histogram(IBIs, bins=5)
 
     if (isinstance(total_neurons, int) and isinstance(time_max, float)
             and spikes is not None):

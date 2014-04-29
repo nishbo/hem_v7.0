@@ -24,7 +24,7 @@ int main(int argc, char const *argv[])
 {
     srand(time(NULL));
 
-    double timeMax = 5000.0;
+    double timeMax = 1000.0;
     double dt = 0.1;
     double dumpPeriod = 100.0;
 
@@ -35,7 +35,7 @@ int main(int argc, char const *argv[])
     std::vector<Synapse *> synapses;
 
     for (int i=0; i < 800; i++){
-        nodes.push_back(new Node("neuron_liaf"));
+        nodes.push_back(new Node("leaky_iaf"));
         nodes.back()->I_stim = 14.0 + 2.0*drand(); // 14.0-16.0
         nodes.back()->addPsWaveType(PsWave(3.0), "current", 1.0); // exc input
         nodes.back()->addPsWaveType(PsWave(3.0), "current", -1.0); // inh input
@@ -43,7 +43,7 @@ int main(int argc, char const *argv[])
     }
 
     for (int i=0; i < 200; i++){
-        inh_nodes.push_back(new Node("neuron_liaf"));
+        inh_nodes.push_back(new Node("leaky_iaf"));
         inh_nodes.back()->I_stim = 14.0 + 2.0*drand(); // 14.0-16.0
         inh_nodes.back()->addPsWaveType(PsWave(3.0), "current", 1.0); // exc input
         inh_nodes.back()->addPsWaveType(PsWave(3.0), "current", -1.0); // inh input
@@ -54,18 +54,18 @@ int main(int argc, char const *argv[])
     nodes.reserve(nodes.size() + inh_nodes.size());
     nodes.insert(nodes.end(), inh_nodes.begin(), inh_nodes.end());
 
-    std::vector<Synapse *> synapses_ee = topology::randomTopology(nodes, "synapse_tm", 80, 0);
-    std::vector<Synapse *> synapses_ei = topology::randomTopology(nodes, inh_nodes, "synapse_tm", 20, 0);
+    std::vector<Synapse *> synapses_ee = topology::randomTopology(nodes, "stdp_and_tm", 80, 0);
+    std::vector<Synapse *> synapses_ei = topology::randomTopology(nodes, inh_nodes, "stdp_and_tm", 20, 0);
     for (auto synapse : synapses_ei){
         synapse->setPreset(1);
         synapse->reset();
     }
-    std::vector<Synapse *> synapses_ie = topology::randomTopology(inh_nodes, nodes, "synapse_tm", 80, 1);
+    std::vector<Synapse *> synapses_ie = topology::randomTopology(inh_nodes, nodes, "stdp_and_tm", 80, 1);
     for (auto synapse : synapses_ie){
         synapse->setPreset(2);
         synapse->reset();
     }
-    std::vector<Synapse *> synapses_ii = topology::randomTopology(inh_nodes, "synapse_tm", 20, 1);
+    std::vector<Synapse *> synapses_ii = topology::randomTopology(inh_nodes, "stdp_and_tm", 20, 1);
     for (auto synapse : synapses_ii){
         synapse->setPreset(3);
         synapse->reset();
@@ -93,7 +93,7 @@ int main(int argc, char const *argv[])
     Output output;
     // output.open();
     output.openSpikeFile();
-    output.openSynapticCurrentFile();
+    // output.openSynapticCurrentFile();
     // output.openSynapticWeightFile();
     output.nodes = nodes;
     output.synapses = synapses;

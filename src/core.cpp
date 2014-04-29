@@ -6,7 +6,7 @@ double Node::dt = 0.1;
 
 Node::Node(std::string class_name)
 {
-    if(class_name.compare("neuron_liaf") == 0){
+    if(class_name.compare("leaky_iaf") == 0){
         _nodeEssentials = new NeuronIaf;
     } else if(class_name.compare("null_node") == 0) {
         _nodeEssentials = new NullNode;
@@ -164,12 +164,16 @@ Synapse::Synapse(std::string className, Node* postNode)
     delay = _postNode->dt;
     waveType = 0;
     
-    if (className.compare("synapse_static") == 0){
+    if (className.compare("static") == 0){
         _synapseEssentials = new SynapseStatic;
     } else if(className.compare("null_node") == 0){
         _synapseEssentials = new NullSynapse;
-    } else if(className.compare("synapse_tm") == 0){
+    } else if(className.compare("tsodyks_markram") == 0){
         _synapseEssentials = new SynapseTM;
+    } else if(className.compare("stdp") == 0){
+        _synapseEssentials = new SynapseStdp;
+    } else if(className.compare("stdp_and_tm") == 0){
+        _synapseEssentials = new SynapseTmAndStdp;
     } else {
         _synapseEssentials = new NullSynapse;
     }

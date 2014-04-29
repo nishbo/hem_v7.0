@@ -52,4 +52,40 @@ private:
 };
 
 
+class SynapseStdp: public SynapseType{
+public:
+    SynapseStdp();
+
+    std::string getClassNick();
+    void postSpike(double currentTime);
+    double preSpike(double currentTime);
+    double weight();
+    void setPreset(int setNumber);
+    void reset();
+    std::vector<double> data();
+private:
+    double _weight, _tauPlus, _tauMinus, _dWeightPlus, _dWeightMinus;
+    double _weightMax, _weightMin;
+    double _lastPresynapticSpike, _lastPostsynapticSpike;
+    double _workingTimeWindowMin, _workingTimeWindowMax;
+};
+
+
+class SynapseTmAndStdp: public SynapseType{
+public:
+    SynapseTmAndStdp();
+
+    std::string getClassNick();
+    void postSpike(double currentTime);
+    double preSpike(double currentTime);
+    double weight();
+    void setPreset(int setNumber);
+    void reset();
+    std::vector<double> data();
+private:
+    SynapseStdp _stdp;
+    SynapseTM _tm;
+};
+
+
 #endif // SYNAPSES_H
