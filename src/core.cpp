@@ -6,16 +6,7 @@ double Node::dt = 0.1;
 
 Node::Node(std::string className)
 {
-    if(className.compare("leaky iaf") == 0){
-        _nodeEssentials = new NeuronIaf;
-    } else if(className.compare("null node") == 0) {
-        _nodeEssentials = new NullNode;
-    } else if(className.compare("periodic generator") == 0) {
-        _nodeEssentials = new NodePeriodicGenerator;
-    } else {
-        _nodeEssentials = new NullNode;
-    }
-
+    _nodeEssentials = chooseNodeType(className);
     I_stim = 0.0;
     I_full = 0.0;
 }
@@ -170,19 +161,7 @@ Synapse::Synapse(std::string className, Node* postNode, std::string stdpType)
     delay = _postNode->dt;
     waveType = 0;
     
-    if (className.compare("static") == 0){
-        _synapseEssentials = new SynapseStatic;
-    } else if(className.compare("null synapse") == 0){
-        _synapseEssentials = new NullSynapse;
-    } else if(className.compare("tsodyks-markram") == 0){
-        _synapseEssentials = new SynapseTM;
-    } else if(className.compare("stdp") == 0){
-        _synapseEssentials = chooseStdp(stdpType);
-    } else if(className.compare("stdp and tm") == 0){
-        _synapseEssentials = new SynapseTmAndStdp(stdpType);
-    } else {
-        _synapseEssentials = new NullSynapse;
-    }
+    _synapseEssentials = chooseSynapseType(className, stdpType);
 }
 
 void Synapse::preSpike(double currentTime)

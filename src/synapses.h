@@ -17,6 +17,7 @@ public:
     virtual std::vector<double> data();
 };
 
+SynapseType* chooseSynapseType(std::string className, std::string stdpType);
 
 class NullSynapse: public SynapseType{
 public:

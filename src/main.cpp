@@ -20,7 +20,7 @@ bool isPeriodNow(double t, double period, double dt)
     return (t - (floor((t + dt*0.001)/period) * period)) < dt * 0.05;
 }
 
-int main(int argc, char const *argv[])
+int diploma()
 {
     srand(time(NULL));
 
@@ -121,5 +121,11 @@ int main(int argc, char const *argv[])
     output.close();
 
     std::cout<<std::endl;
+    return 0;
+}
+
+int main(int argc, char const *argv[])
+{
+    diploma();
     return 0;
 }

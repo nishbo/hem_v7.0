@@ -1,6 +1,6 @@
 
 CC            = gcc
-CXX           = icpc
+CXX           = g++#icpc
 CFLAGS        = -g -Wall -std=c++11
 #-m64
 

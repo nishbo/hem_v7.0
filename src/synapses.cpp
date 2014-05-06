@@ -1,6 +1,24 @@
 #include "synapses.h"
 
 
+SynapseType* chooseSynapseType(std::string className, std::string stdpType)
+{
+    if (className.compare("static") == 0){
+        return new SynapseStatic;
+    } else if(className.compare("null synapse") == 0){
+        return new NullSynapse;
+    } else if(className.compare("tsodyks-markram") == 0){
+        return new SynapseTM;
+    } else if(className.compare("stdp") == 0){
+        return chooseStdp(stdpType);
+    } else if(className.compare("stdp and tm") == 0){
+        return new SynapseTmAndStdp(stdpType);
+    } else {
+        return new NullSynapse;
+    }
+}
+
+
 double SynapseType::preSpike(double currentTime)
 {
     return 0.0;

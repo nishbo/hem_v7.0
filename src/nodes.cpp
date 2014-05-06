@@ -1,6 +1,20 @@
 #include "nodes.h"
 
 
+NodeType* chooseNodeType(std::string className)
+{
+    if(className.compare("leaky iaf") == 0){
+        return new NeuronIaf;
+    } else if(className.compare("null node") == 0) {
+        return new NullNode;
+    } else if(className.compare("periodic generator") == 0) {
+        return new NodePeriodicGenerator;
+    } else {
+        return new NullNode;
+    }
+}
+
+
 void NodeType::forceSpike(double currentTime)
 {
     lastSpiked = currentTime;
@@ -111,6 +125,36 @@ int NodePeriodicGenerator::step(double currentTime, double dt, double I)
 }
 
 void NodePeriodicGenerator::forceSpike(double currentTime)
+{
+    lastSpiked = currentTime;
+}
+
+/****************************** Poisson Generator ************************** */
+// 
+
+std::string NodePoissonGenerator::type()
+{
+    return "poisson generator";
+}
+
+NodePoissonGenerator::NodePoissonGenerator()
+{
+    V = 0.0;
+    _period = 10.0;
+
+    lastSpiked = 0.0;
+}
+
+int NodePoissonGenerator::step(double currentTime, double dt, double I)
+{
+    if (currentTime - lastSpiked >= _period){
+        lastSpiked = currentTime;
+        return 1;
+    }
+    return 0;
+}
+
+void NodePoissonGenerator::forceSpike(double currentTime)
 {
     lastSpiked = currentTime;
 }

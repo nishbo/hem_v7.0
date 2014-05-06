@@ -17,6 +17,9 @@ public:
 };
 
 
+NodeType* chooseNodeType(std::string className);
+
+
 class NullNode: public NodeType
 {
 public:
@@ -49,6 +52,19 @@ public:
 
 private:
     double _period;
+};
+
+
+class NodePoissonGenerator: public NodeType
+{
+public:
+    NodePoissonGenerator();
+    int step(double current_time, double dt, double I);
+    void forceSpike(double current_time);
+    std::string type();
+
+private:
+    double _period, _next_spike;
 };
 
 #endif // NODES_H
