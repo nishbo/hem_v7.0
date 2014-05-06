@@ -22,13 +22,13 @@ public:
     double I_full;
 
     double V();
+    void setPreset(int setNumber);
+    std::string type();
 
     Node(std::string className);
     void initialiseSpikeBuffer(double maxDelay);
     void addOutgoingSynapse(Synapse* synapse); //add an outgoing synapse
     void addIncomingSynapse(Synapse* synapse); //add an incoming synapse
-
-    void setPreset(int setNumber);
 
     void addPsWaveType(PsWave newWave, std::string base, double modifier);
 
@@ -71,7 +71,8 @@ private:
 
 class Synapse{
 public:
-    Synapse(std::string className, Node* postNode);
+    Synapse(std::string className, Node* postNode,\
+            std::string stdpType="no boundaries");
     void preSpike(double currentTime); //signal of presynaptic spike
     void postSpike(double currentTime); //signal of postsynaptic spike
 
@@ -79,6 +80,7 @@ public:
 
     void setPreset(int setNumber);
     void reset();
+    std::string type();
 
     std::vector<double> data();
 

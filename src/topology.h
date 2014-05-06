@@ -7,14 +7,17 @@
 
 namespace topology{
 
-    Synapse* connectN2N(Node* preNode, Node* postNode, std::string className);
+    Synapse* connectN2N(Node* preNode, Node* postNode, std::string className,\
+        std::string stdpType="no boundaries");
 
     std::vector<Synapse *> randomTopology(std::vector<Node *> nodes,\
-        std::string className, int connectionsPerNeuron, int waveType=0);
+        std::string className, int connectionsPerNeuron, int waveType=0,\
+        std::string stdpType="no boundaries");
 
     std::vector<Synapse *> randomTopology(std::vector<Node *> nodes_from,\
         std::vector<Node *> nodes_to,\
-        std::string className, int connectionsPerNeuron, int waveType=0);
+        std::string className, int connectionsPerNeuron, int waveType=0,\
+        std::string stdpType="no boundaries");
 
 }
 

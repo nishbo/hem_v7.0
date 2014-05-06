@@ -15,7 +15,7 @@ void NodeType::setPreset(int setNumber)
 
 std::string NullNode::type()
 {
-    return "null_node";
+    return "null node";
 }
 
 int NullNode::step(double currentTime, double dt, double I)
@@ -28,7 +28,7 @@ int NullNode::step(double currentTime, double dt, double I)
 
 std::string NeuronIaf::type()
 {
-    return "neuron_liaf";
+    return "neuron liaf";
 }
 
 NeuronIaf::NeuronIaf()
@@ -90,7 +90,7 @@ void NeuronIaf::forceSpike(double currentTime)
 
 std::string NodePeriodicGenerator::type()
 {
-    return "node_periodic_generator";
+    return "periodic generator";
 }
 
 NodePeriodicGenerator::NodePeriodicGenerator()

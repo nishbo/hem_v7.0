@@ -4,13 +4,13 @@
 /******************************* Node *************************************** */
 double Node::dt = 0.1;
 
-Node::Node(std::string class_name)
+Node::Node(std::string className)
 {
-    if(class_name.compare("leaky_iaf") == 0){
+    if(className.compare("leaky iaf") == 0){
         _nodeEssentials = new NeuronIaf;
-    } else if(class_name.compare("null_node") == 0) {
+    } else if(className.compare("null node") == 0) {
         _nodeEssentials = new NullNode;
-    } else if(class_name.compare("periodic_generator") == 0) {
+    } else if(className.compare("periodic generator") == 0) {
         _nodeEssentials = new NodePeriodicGenerator;
     } else {
         _nodeEssentials = new NullNode;
@@ -25,8 +25,14 @@ void Node::setPreset(int setNumber)
     _nodeEssentials->setPreset(setNumber);
 }
 
-double Node::V(){
+double Node::V()
+{
     return _nodeEssentials->V;
+}
+
+std::string Node::type()
+{
+    return _nodeEssentials->type();
 }
 
 void Node::initialiseSpikeBuffer(double maxDelay)
@@ -157,7 +163,7 @@ double PsWave::_stepDoubleExponential(double dt, double weight)
 
 
 /******************************* Synapse ************************************ */
-Synapse::Synapse(std::string className, Node* postNode)
+Synapse::Synapse(std::string className, Node* postNode, std::string stdpType)
 {
     _postNode = postNode;
 
@@ -166,14 +172,14 @@ Synapse::Synapse(std::string className, Node* postNode)
     
     if (className.compare("static") == 0){
         _synapseEssentials = new SynapseStatic;
-    } else if(className.compare("null_node") == 0){
+    } else if(className.compare("null synapse") == 0){
         _synapseEssentials = new NullSynapse;
-    } else if(className.compare("tsodyks_markram") == 0){
+    } else if(className.compare("tsodyks-markram") == 0){
         _synapseEssentials = new SynapseTM;
     } else if(className.compare("stdp") == 0){
-        _synapseEssentials = new SynapseStdp;
-    } else if(className.compare("stdp_and_tm") == 0){
-        _synapseEssentials = new SynapseTmAndStdp;
+        _synapseEssentials = chooseStdp(stdpType);
+    } else if(className.compare("stdp and tm") == 0){
+        _synapseEssentials = new SynapseTmAndStdp(stdpType);
     } else {
         _synapseEssentials = new NullSynapse;
     }
@@ -208,6 +214,11 @@ void Synapse::reset()
 std::vector<double> Synapse::data()
 {
     return _synapseEssentials->data();
+}
+
+std::string Synapse::type()
+{
+    return _synapseEssentials->type();
 }
 
 
