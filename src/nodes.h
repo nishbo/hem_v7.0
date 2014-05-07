@@ -3,6 +3,8 @@
 
 #include <iostream>
 
+#include "random.h"
+
 class NodeType
 {
 public:
@@ -64,7 +66,7 @@ public:
     std::string type();
 
 private:
-    double _period, _next_spike;
+    double _frequency, _nextSpike;
 };
 
 #endif // NODES_H

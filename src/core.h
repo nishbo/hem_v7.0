@@ -84,6 +84,8 @@ public:
 
     std::vector<double> data();
 
+    void copy(Synapse* to);
+
     int waveType;
     double delay;
 private:

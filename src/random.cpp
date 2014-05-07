@@ -116,7 +116,7 @@ double genran::expoVariate(double lambda)
     if (lambda == 0.0)
         exit(1205);
 
-    return -1.0 / double(lambda) * log(drand());
+    return -1.0 / lambda * log(drand());
 }
 
 /*
@@ -268,7 +268,13 @@ double genran::weibullVariate(double alpha, double beta)
     return alpha * pow(-log(u), 1.0/beta);
 }
 
+/*
+Generates time of the next Poisson event.
+
+expoVariate accepts 1/mean, and exponential dixtribution needs to be called with
+mean=1/freqency.
+ */
 double genran::poissonProcess(double frequency)
 {
-    return expoVariate(1.0 / frequency);
+    return expoVariate(frequency);
 }

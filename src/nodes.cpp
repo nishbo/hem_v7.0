@@ -9,6 +9,8 @@ NodeType* chooseNodeType(std::string className)
         return new NullNode;
     } else if(className.compare("periodic generator") == 0) {
         return new NodePeriodicGenerator;
+    } else if(className.compare("poisson generator") == 0) {
+        return new NodePoissonGenerator;
     } else {
         return new NullNode;
     }
@@ -140,15 +142,17 @@ std::string NodePoissonGenerator::type()
 NodePoissonGenerator::NodePoissonGenerator()
 {
     V = 0.0;
-    _period = 10.0;
+    _frequency = 10.0;
+    _nextSpike = genran::poissonProcess(_frequency);
 
     lastSpiked = 0.0;
 }
 
 int NodePoissonGenerator::step(double currentTime, double dt, double I)
 {
-    if (currentTime - lastSpiked >= _period){
+    if (currentTime >= _nextSpike){
         lastSpiked = currentTime;
+        _nextSpike = currentTime + genran::poissonProcess(_frequency);
         return 1;
     }
     return 0;

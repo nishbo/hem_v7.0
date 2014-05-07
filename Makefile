@@ -15,6 +15,7 @@ SOURCES       = $(SOURCE_DIR)/main.cpp \
     $(SOURCE_DIR)/cyctimbuf.cpp \
     $(SOURCE_DIR)/topology.cpp \
     $(SOURCE_DIR)/output.cpp \
+    $(SOURCE_DIR)/random.cpp \
     $(SOURCE_DIR)/core.cpp 
 OBJECTS       = $(OBJECT_DIR)/main.o \
     $(OBJECT_DIR)/nodes.o \
@@ -22,6 +23,7 @@ OBJECTS       = $(OBJECT_DIR)/main.o \
     $(OBJECT_DIR)/cyctimbuf.o \
     $(OBJECT_DIR)/topology.o \
     $(OBJECT_DIR)/output.o \
+    $(OBJECT_DIR)/random.o \
     $(OBJECT_DIR)/core.o 
 DESTDIR_TARGET = hem
 
@@ -78,7 +80,11 @@ $(OBJECT_DIR)/nodes.o: $(SOURCE_DIR)/nodes.cpp \
 $(OBJECT_DIR)/synapses.o: $(SOURCE_DIR)/synapses.cpp \
     $(SOURCE_DIR)/synapses.h 
 	$(CXX) -c $(CFLAGS) -o $(OBJECT_DIR)/synapses.o $(SOURCE_DIR)/synapses.cpp
-	
+
 $(OBJECT_DIR)/cyctimbuf.o: $(SOURCE_DIR)/cyctimbuf.cpp \
     $(SOURCE_DIR)/cyctimbuf.h 
 	$(CXX) -c $(CFLAGS) -o $(OBJECT_DIR)/cyctimbuf.o $(SOURCE_DIR)/cyctimbuf.cpp
+
+$(OBJECT_DIR)/random.o: $(SOURCE_DIR)/random.cpp \
+    $(SOURCE_DIR)/random.h 
+	$(CXX) -c $(CFLAGS) -o $(OBJECT_DIR)/random.o $(SOURCE_DIR)/random.cpp

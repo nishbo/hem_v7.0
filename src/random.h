@@ -32,7 +32,7 @@ namespace genran{
 
     double weibullVariate(double alpha, double beta);
 
-    double poissonProcess(double lambda);
+    double poissonProcess(double frequency);
 }
 
 #endif // RANDOM_H

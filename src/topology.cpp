@@ -5,6 +5,12 @@ Synapse* topology::connectN2N(Node* preNode, Node* postNode,\
                               std::string className, std::string stdpType)
 {
     Synapse* synapse = new Synapse(className, postNode, stdpType);
+    connectN2N(preNode, postNode, synapse);
+    return synapse;
+}
+
+void topology::connectN2N(Node* preNode, Node* postNode, Synapse* synapse)
+{
     postNode->addIncomingSynapse(synapse);
     preNode->addOutgoingSynapse(synapse);
     return synapse;
