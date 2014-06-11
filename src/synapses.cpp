@@ -46,6 +46,10 @@ std::vector<double> SynapseType::data()
     return std::vector<double>();
 }
 
+void SynapseType::control(int sequence)
+{
+}
+
 /******************** NULL SYNAPSE ****************************************** */
 // Class basically represents a synapse-filler that does nothing.
 
@@ -53,6 +57,12 @@ std::string NullSynapse::type()
 {
     return "null synapse";
 }
+
+SynapseType* NullSynapse::duplicate()
+{
+    return new NullSynapse;
+}
+
 
 /******************** SYNAPSE STATIC **************************************** */
 // A static synapse that does not change weight.
@@ -77,6 +87,13 @@ double SynapseStatic::preSpike(double currentTime)
     return _weight; // = 2.0 * ((double) rand() / RAND_MAX);
 }
 
+SynapseType* SynapseStatic::duplicate()
+{
+    SynapseStatic* synapse = new SynapseStatic;
+    synapse->_weight = _weight;
+    return synapse;
+}
+
 /******************** SYNAPSE TSODYKS-MARKRAM CORRECTED MODEL *************** */
 // 
 SynapseTM::SynapseTM()
@@ -89,7 +106,7 @@ void SynapseTM::reset()
 {
     _lastPresynapticSpike = -(_D + 10000.0) * (_F + 10000.0);
     _u = _U;
-    _r = 0.01;//1.0; // REMOVED OVERBURST AT THE BEGINNING
+    _r = 1.0; // REMOVED OVERBURST AT THE BEGINNING
 }
 
 std::string SynapseTM::type()
@@ -112,6 +129,29 @@ double SynapseTM::preSpike(double currentTime)
 double SynapseTM::weight()
 {
     return _A * _u * _r;
+}
+
+void SynapseTM::shuffle()
+{
+    _A = genran::gauss(_A, _A * 0.1, 0.0, 10.0 * _A);
+    _U = genran::gauss(_U, _U * 0.1, 0.0, 1.0);
+    _D = genran::gauss(_D, _D * 0.1, 0.0, 10.0 * _D);
+    _F = genran::gauss(_F, _F * 0.1, 0.0, 10.0 * _F);
+}
+
+void SynapseTM::control(int sequence)
+{
+    switch (sequence){
+        case 0:
+            shuffle();
+            _A = 1.0;
+            break;
+        case 1:
+            break;
+        case 2:
+            shuffle();
+            break;
+    }
 }
 
 void SynapseTM::setPreset(int setNumber)
@@ -142,7 +182,7 @@ void SynapseTM::setPreset(int setNumber)
             _A = 7.2;
             break;
         default:
-            setPreset(0);
+            exit(1102);
     }
 }
 
@@ -154,10 +194,25 @@ std::vector<double> SynapseTM::data()
     return v;
 }
 
+SynapseType* SynapseTM::duplicate()
+{
+    SynapseTM* synapse = new SynapseTM;
+    synapse->_A = _A;
+    synapse->_D = _D;
+    synapse->_F = _F;
+    synapse->_U = _U;
+    synapse->_lastPresynapticSpike = _lastPresynapticSpike;
+    synapse->_r = _r;
+    synapse->_u = _u;
+
+    return synapse;
+}
+
 /******************** SYNAPSE STDP ****************************************** */
 // 
 SynapseStdp::SynapseStdp()
 {
+    _weight = 0.5;
     setPreset(0);
     reset();
 }
@@ -166,7 +221,6 @@ void SynapseStdp::reset()
 {
     _lastPresynapticSpike = -1000.0;
     _lastPostsynapticSpike = -1000.0;
-    _weight = 0.5;
 }
 
 std::string SynapseStdp::type()
@@ -224,7 +278,7 @@ void SynapseStdp::setPreset(int setNumber)
             _workingTimeWindowMin = 2.0;
             _workingTimeWindowMax =  60.0;
             break;
-        case 1: //i
+        case 2: //i
             _tauPlus = 20.0;
             _tauMinus = 20.0;
             // No changes occure on spike:
@@ -235,7 +289,7 @@ void SynapseStdp::setPreset(int setNumber)
             _workingTimeWindowMax =  60.0;
             break;
         default:
-            setPreset(0);
+            exit(1102);
     }
 }
 
@@ -246,6 +300,21 @@ std::vector<double> SynapseStdp::data()
     return v;
 }
 
+SynapseType* SynapseStdp::duplicate()
+{
+    SynapseStdp* synapse = new SynapseStdp;
+    synapse->_tauPlus = _tauPlus;
+    synapse->_tauMinus = _tauMinus;
+    synapse->_dWeightPlus = _dWeightPlus;
+    synapse->_dWeightMinus = _dWeightMinus;
+    synapse->_workingTimeWindowMin = _workingTimeWindowMin;
+    synapse->_workingTimeWindowMax = _workingTimeWindowMax;
+    synapse->_weight = _weight;
+    synapse->_lastPostsynapticSpike = _lastPostsynapticSpike;
+    synapse->_lastPresynapticSpike = _lastPresynapticSpike;
+    
+    return synapse;
+}
 
 /******************** SYNAPSE STDP AGILE BOUNDARIES ************************* */
 // 
@@ -289,7 +358,7 @@ void SynapseStdpAgileBoundaries::setPreset(int setNumber)
             _workingTimeWindowMin = 0.0;
             _workingTimeWindowMax =  100000.0;
             break;
-        case 1: //i
+        case 2: //i
             _weightMax = 1.0;
             _weightMin = 0.0;
 
@@ -303,10 +372,27 @@ void SynapseStdpAgileBoundaries::setPreset(int setNumber)
             _workingTimeWindowMax =  60.0;
             break;
         default:
-            setPreset(0);
+            exit(1102);
     }
 }
 
+SynapseType* SynapseStdpAgileBoundaries::duplicate()
+{
+    SynapseStdpAgileBoundaries* synapse = new SynapseStdpAgileBoundaries;
+    synapse->_tauPlus = _tauPlus;
+    synapse->_tauMinus = _tauMinus;
+    synapse->_dWeightPlus = _dWeightPlus;
+    synapse->_dWeightMinus = _dWeightMinus;
+    synapse->_workingTimeWindowMin = _workingTimeWindowMin;
+    synapse->_workingTimeWindowMax = _workingTimeWindowMax;
+    synapse->_weight = _weight;
+    synapse->_lastPostsynapticSpike = _lastPostsynapticSpike;
+    synapse->_lastPresynapticSpike = _lastPresynapticSpike;
+    synapse->_weightMin = _weightMin;
+    synapse->_weightMax = _weightMax;
+    
+    return synapse;
+}
 
 /******************** SYNAPSE STDP HARD BOUNDARIES ************************** */
 // 
@@ -350,7 +436,7 @@ void SynapseStdpHardBoundaries::setPreset(int setNumber)
             _workingTimeWindowMin = 2.0;
             _workingTimeWindowMax =  60.0;
             break;
-        case 1: //i
+        case 2: //i
             _weightMax = 1.0;
             _weightMin = 0.0;
 
@@ -364,7 +450,46 @@ void SynapseStdpHardBoundaries::setPreset(int setNumber)
             _workingTimeWindowMax =  60.0;
             break;
         default:
-            setPreset(0);
+            exit(1102);
+    }
+}
+
+SynapseType* SynapseStdpHardBoundaries::duplicate()
+{
+    SynapseStdpHardBoundaries* synapse = new SynapseStdpHardBoundaries;
+    synapse->_tauPlus = _tauPlus;
+    synapse->_tauMinus = _tauMinus;
+    synapse->_dWeightPlus = _dWeightPlus;
+    synapse->_dWeightMinus = _dWeightMinus;
+    synapse->_workingTimeWindowMin = _workingTimeWindowMin;
+    synapse->_workingTimeWindowMax = _workingTimeWindowMax;
+    synapse->_weight = _weight;
+    synapse->_lastPostsynapticSpike = _lastPostsynapticSpike;
+    synapse->_lastPresynapticSpike = _lastPresynapticSpike;
+    synapse->_weightMin = _weightMin;
+    synapse->_weightMax = _weightMax;
+    
+    return synapse;
+}
+
+void SynapseStdpHardBoundaries::control(int sequence)
+{
+    switch (sequence){
+        case 0:
+            _weightMax = genran::normalVariate(54.0, 10.8, 21.6, 86.4);
+            if (rand() % 2)
+                _weight = _weightMax;
+            else
+                _weight = 0.0;
+            _dWeightPlus = 0.0;
+            _dWeightMinus = 0.0;
+            break;
+        case 1:
+            _weight = genran::gammaVariate(90.0/7.0, 0.7);
+
+            _dWeightPlus = 0.3;
+            _dWeightMinus = 0.3105;
+            break;
     }
 }
 
@@ -387,29 +512,29 @@ SynapseType* chooseStdp(std::string stdpType)
 
 SynapseTmAndStdp::SynapseTmAndStdp(std::string stdpType)
 {
-    _tm = SynapseTM();
+    _tm = new SynapseTM;
     _stdp = chooseStdp(stdpType);
 }
 
 void SynapseTmAndStdp::reset()
 {
-    _tm.reset();
+    _tm->reset();
     _stdp->reset();
 }
 
 std::string SynapseTmAndStdp::type()
 {
-    return _tm.type() + " and " + _stdp->type();
+    return _tm->type() + " and " + _stdp->type();
 }
 
 double SynapseTmAndStdp::preSpike(double currentTime)
 {
-    return _tm.preSpike(currentTime) * _stdp->preSpike(currentTime);
+    return _tm->preSpike(currentTime) * _stdp->preSpike(currentTime);
 }
 
 void SynapseTmAndStdp::postSpike(double currentTime)
 {
-    _tm.postSpike(currentTime);
+    _tm->postSpike(currentTime);
     _stdp->postSpike(currentTime);
 }
 
@@ -420,15 +545,30 @@ double SynapseTmAndStdp::weight()
 
 void SynapseTmAndStdp::setPreset(int setNumber)
 {
-    _tm.setPreset(setNumber);
-    _stdp->setPreset(int(setNumber / 2));
+    _tm->setPreset(setNumber);
+    _stdp->setPreset(setNumber);
 }
 
 std::vector<double> SynapseTmAndStdp::data()
 {
-    std::vector<double> v = _tm.data();
+    std::vector<double> v = _tm->data();
     std::vector<double> v2 = _stdp->data();
     v.reserve(v.size() + v2.size());
     v.insert(v.end(), v2.begin(), v2.end());
     return v;
+}
+
+SynapseType* SynapseTmAndStdp::duplicate()
+{
+    SynapseTmAndStdp* synapse = new SynapseTmAndStdp;
+    synapse->_tm = _tm->duplicate();
+    synapse->_stdp = _stdp->duplicate();
+    
+    return synapse;
+}
+
+void SynapseTmAndStdp::control(int sequence)
+{
+    _tm->control(sequence);
+    _stdp->control(sequence);
 }

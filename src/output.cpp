@@ -152,8 +152,10 @@ void Output::printEssentialData(double length, std::string filename)
     f<<"Amount_of_synapses "<< synapses.size()<<std::endl;
     f<<"Timelength_of_simulation "<< length <<std::endl;
     f<<"dt "<< Node::dt <<std::endl;
-    f<<"Sample_node_type "<< nodes.at(0)->type() <<std::endl;
-    f<<"Sample_synapse_type "<< synapses.at(0)->type() <<std::endl;
+    if (nodes.size())
+        f<<"Sample_node_type "<< nodes.at(0)->type() <<std::endl;
+    if (synapses.size())
+        f<<"Sample_synapse_type "<< synapses.at(0)->type() <<std::endl;
     f.close();
 }
 

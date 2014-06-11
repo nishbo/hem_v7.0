@@ -24,6 +24,8 @@ public:
     double V();
     void setPreset(int setNumber);
     std::string type();
+    bool isSpiking(double currentTime);
+    void forceSpike(double currentTime);
 
     Node(std::string className);
     void initialiseSpikeBuffer(double maxDelay);
@@ -81,10 +83,12 @@ public:
     void setPreset(int setNumber);
     void reset();
     std::string type();
+    void control(int sequence);
 
     std::vector<double> data();
 
-    void copy(Synapse* to);
+    Synapse* duplicate();
+    Synapse* duplicate(Node* postNode);
 
     int waveType;
     double delay;

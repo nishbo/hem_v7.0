@@ -87,6 +87,16 @@ void Node::announceConnections()
     }
 }
 
+bool Node::isSpiking(double currentTime)
+{
+    return _nodeEssentials->isSpiking(currentTime);
+}
+
+void Node::forceSpike(double currentTime)
+{
+    _nodeEssentials->forceSpike(currentTime);
+}
+
 /******************************* PsWave ************************************* */
 PsWave::PsWave(double tau1, double tau2)
 {
@@ -154,6 +164,10 @@ double PsWave::_stepDoubleExponential(double dt, double weight)
 
 
 /******************************* Synapse ************************************ */
+Synapse::Synapse()
+{
+}
+
 Synapse::Synapse(std::string className, Node* postNode, std::string stdpType)
 {
     _postNode = postNode;
@@ -198,6 +212,33 @@ std::vector<double> Synapse::data()
 std::string Synapse::type()
 {
     return _synapseEssentials->type();
+}
+
+void Synapse::control(int sequence)
+{
+    _synapseEssentials->control(sequence);
+}
+
+Synapse* Synapse::duplicate()
+{
+    Synapse* synapse = new Synapse;
+    synapse->_postNode = _postNode;
+    synapse->delay = delay;
+    synapse->waveType = waveType;
+    synapse->_synapseEssentials = _synapseEssentials->duplicate();
+
+    return synapse;
+}
+
+Synapse* Synapse::duplicate(Node* postNode)
+{
+    Synapse* synapse = new Synapse;
+    synapse->_postNode = postNode;
+    synapse->delay = delay;
+    synapse->waveType = waveType;
+    synapse->_synapseEssentials = _synapseEssentials->duplicate();
+
+    return synapse;
 }
 
 

@@ -36,6 +36,9 @@ all: Makefile $(DESTDIR_TARGET)
 $(DESTDIR_TARGET): dir $(OBJECTS)
 	$(CXX) $(CFLAGS) -o $(DESTDIR_TARGET) $(OBJECTS)
 
+# lol:
+# 	g++ --version
+
 dir: 
 	$(CREATE_DIR) obj
 	$(CREATE_DIR) data

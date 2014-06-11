@@ -13,7 +13,6 @@ void topology::connectN2N(Node* preNode, Node* postNode, Synapse* synapse)
 {
     postNode->addIncomingSynapse(synapse);
     preNode->addOutgoingSynapse(synapse);
-    return synapse;
 }
 
 std::vector<Synapse *> topology::randomTopology(\

@@ -5,16 +5,20 @@
 #include <cmath>
 #include <vector>
 
+#include "random.h"
+
 
 class SynapseType{
 public:
     virtual double weight();
     virtual std::string type()=0;
+    virtual SynapseType* duplicate()=0;
     virtual double preSpike(double currentTime);
     virtual void postSpike(double currentTime);
     virtual void setPreset(int setNumber);
     virtual void reset();
     virtual std::vector<double> data();
+    virtual void control(int sequence);
 };
 
 SynapseType* chooseSynapseType(std::string className, std::string stdpType);
@@ -22,12 +26,14 @@ SynapseType* chooseSynapseType(std::string className, std::string stdpType);
 class NullSynapse: public SynapseType{
 public:
     std::string type();
+    SynapseType* duplicate();
 };
 
 
 class SynapseStatic: public SynapseType{
 public:
     SynapseStatic();
+    SynapseType* duplicate();
 
     std::string type();
     double preSpike(double currentTime);
@@ -40,6 +46,7 @@ private:
 class SynapseTM: public SynapseType{
 public:
     SynapseTM();
+    SynapseType* duplicate();
 
     std::string type();
     double preSpike(double currentTime);
@@ -47,6 +54,9 @@ public:
     void setPreset(int setNumber);
     void reset();
     std::vector<double> data();
+
+    void shuffle();
+    void control(int sequence);
 private:
     double _U, _D, _F, _A;
     double _r, _u, _lastPresynapticSpike;
@@ -56,6 +66,7 @@ private:
 class SynapseStdp: public SynapseType{
 public:
     SynapseStdp();
+    virtual SynapseType* duplicate();
 
     double postSpikeUnbound(double currentTime);
     double preSpikeUnbound(double currentTime);
@@ -77,6 +88,7 @@ protected:
 class SynapseStdpAgileBoundaries: public SynapseStdp{
 public:
     SynapseStdpAgileBoundaries();
+    SynapseType* duplicate();
 
     std::string type();
     void postSpike(double currentTime);
@@ -90,11 +102,14 @@ private:
 class SynapseStdpHardBoundaries: public SynapseStdp{
 public:
     SynapseStdpHardBoundaries();
+    SynapseType* duplicate();
 
     std::string type();
     void postSpike(double currentTime);
     double preSpike(double currentTime);
     void setPreset(int setNumber);
+
+    void control(int sequence);
 private:
     double _weightMax, _weightMin;
 };
@@ -104,6 +119,7 @@ SynapseType* chooseStdp(std::string stdpType);
 class SynapseTmAndStdp: public SynapseType{
 public:
     SynapseTmAndStdp(std::string stdpType="no boundaries");
+    SynapseType* duplicate();
 
     std::string type();
     void postSpike(double currentTime);
@@ -112,9 +128,10 @@ public:
     void setPreset(int setNumber);
     void reset();
     std::vector<double> data();
+    void control(int sequence);
 private:
     SynapseType* _stdp;
-    SynapseTM _tm;
+    SynapseType* _tm;
 };
 
 

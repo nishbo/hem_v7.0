@@ -26,6 +26,11 @@ void NodeType::setPreset(int setNumber)
 {
 }
 
+bool NodeType::isSpiking(double currentTime)
+{
+    return false;
+}
+
 /****************************** NULL NODE *********************************** */
 // Class basically represents a node-filler that does nothing.
 
@@ -83,7 +88,7 @@ void NeuronIaf::setPreset(int setNumber)
 
 int NeuronIaf::step(double currentTime, double dt, double I)
 {
-    if (currentTime >= lastSpiked + _tau_ref){
+    if (not isSpiking(currentTime)){
         V += dt * ( - (V - _V_rest) + _R_m * I) / _tau_m;
 
         if (V >= _V_th){  // spike
@@ -99,6 +104,13 @@ void NeuronIaf::forceSpike(double currentTime)
 {
     V = _V_reset;
     lastSpiked = currentTime;
+}
+
+bool NeuronIaf::isSpiking(double currentTime)
+{
+    if (currentTime < lastSpiked + _tau_ref)
+        return true;
+    return false;
 }
 
 /****************************** Periodic Generator ************************** */

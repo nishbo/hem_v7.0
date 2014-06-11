@@ -1,4 +1,5 @@
 #include "random.h"
+#include "iostream"
 
 double genran::drand()
 {
@@ -179,7 +180,6 @@ double genran::gammaVariate(double alpha, double beta)
 {
     if (alpha <= 0.0 or beta <= 0.0)
         exit(1206);
-
     if (alpha > 1.0){
         // Uses R.C.H. Cheng, "The generation of Gamma
         // variables with non-integral shape parameters",
@@ -189,15 +189,15 @@ double genran::gammaVariate(double alpha, double beta)
         double bbb = alpha - LOG4;
         double ccc = alpha + ainv;
 
+        double u1, u2, v, x, z, r;
+
         while (1){
-            double u1 = drand();
-            if (not 1e-7 < u1 < 0.9999999)
-                continue;
-            double u2 = 1.0 - drand();
-            double v = log(u1/(1.0-u1))/ainv;
-            double x = alpha*exp(v);
-            double z = u1*u1*u2;
-            double r = bbb+ccc*v-x;
+            u1 = uniform(1e-6, 1.0 - 1e-6);
+            u2 = 1.0 - drand();
+            v = log(u1/(1.0 - u1))/ainv;
+            x = alpha * exp(v);
+            z = u1 * u1 * u2;
+            r = bbb + ccc*v - x;
             if (r + SG_MAGICCONST - 4.5*z >= 0.0 or r >= log(z))
                 return x * beta;
         }
@@ -206,16 +206,16 @@ double genran::gammaVariate(double alpha, double beta)
     } else { // alpha is between 0 and 1 (exclusive)
         // Uses ALGORITHM GS of Statistical Computing - Kennedy & Gentle
 
-        double x;
+        double x, u, b, p, u1;
         while (1){
-            double u = drand();
-            double b = (E + alpha)/E;
-            double p = b*u;
+            u = drand();
+            b = (E + alpha)/E;
+            p = b*u;
             if (p <= 1.0)
                 x = pow(p, (1.0/alpha));
             else
-                x = -log((b-p)/alpha);
-            double u1 = drand();
+                x = -log((b - p)/alpha);
+            u1 = drand();
             if (p > 1.0){
                 if (u1 <= pow(x, (alpha - 1.0)))
                     break;
