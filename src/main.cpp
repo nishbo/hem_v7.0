@@ -24,15 +24,6 @@ bool isPeriodNow(double t, double period, double dt)
 }
 
 
-std::string doubleToString(double number){
-    std::stringstream buf;
-    buf << number;    //add number to the stream
-    return buf.str(); //return a string with the contents of the stream
-}
-
-
-
-
 int diploma()
 {
     srand(time(NULL));
@@ -190,7 +181,7 @@ int maass()
         topology::connectN2N(generators.back(), &node2, synapse2);
         synapses2.push_back(synapse2);
 
-        std::cout<<"\t\t generators created: "<< i << "%%\r";
+        std::cout<<"\t\t generators created: "<< i << "%\r";
     }
 
     for (int i=0; i < 10; i++){
@@ -208,7 +199,7 @@ int maass()
         topology::connectN2N(generators.back(), &node2, synapse2);
         // synapses2.push_back(synapse2);
 
-        std::cout<<"\t\t generators created: "<< i+90 << "%%\r";
+        std::cout<<"\t\t generators created: "<< i+90 << "%\r";
     }
     std::cout<<std::endl;
 
@@ -216,7 +207,7 @@ int maass()
 
     Output output;
     output.openSpikeFile();
-    
+
     output.openSynapticWeightFile("data/target.txt");
     output.synapses = synapses1;
     output.printSynapticWeights(0.0);
@@ -248,7 +239,7 @@ int maass()
         }
 
         if (isPeriodNow(t, dumpPeriod, dt) and t>0.0){
-            s = std::string("data/dump_") + std::to_sting(t) +".txt";
+            s = std::string("data/dump_") + std::to_string(t)+ ".txt";
             dumpTimes << s <<std::endl;
             output.openSynapticWeightFile(s);
             output.print(t);

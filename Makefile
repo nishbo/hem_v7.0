@@ -1,7 +1,7 @@
 
 CC            = gcc
-CXX           = g++#icpc
-CFLAGS        = -g -Wall -std=c++11
+CXX           = g++48#icpc
+CFLAGS        = -g -Wall --std=c++11
 #-m64
 
 DEL_FILE      = rm
@@ -16,7 +16,7 @@ SOURCES       = $(SOURCE_DIR)/main.cpp \
     $(SOURCE_DIR)/topology.cpp \
     $(SOURCE_DIR)/output.cpp \
     $(SOURCE_DIR)/random.cpp \
-    $(SOURCE_DIR)/core.cpp 
+    $(SOURCE_DIR)/core.cpp
 OBJECTS       = $(OBJECT_DIR)/main.o \
     $(OBJECT_DIR)/nodes.o \
     $(OBJECT_DIR)/synapses.o \
@@ -24,7 +24,7 @@ OBJECTS       = $(OBJECT_DIR)/main.o \
     $(OBJECT_DIR)/topology.o \
     $(OBJECT_DIR)/output.o \
     $(OBJECT_DIR)/random.o \
-    $(OBJECT_DIR)/core.o 
+    $(OBJECT_DIR)/core.o
 DESTDIR_TARGET = hem
 
 first: all
@@ -39,7 +39,7 @@ $(DESTDIR_TARGET): dir $(OBJECTS)
 # lol:
 # 	g++ --version
 
-dir: 
+dir:
 	$(CREATE_DIR) obj
 	$(CREATE_DIR) data
 
@@ -77,17 +77,17 @@ $(OBJECT_DIR)/output.o: $(SOURCE_DIR)/output.cpp \
 	$(CXX) -c $(CFLAGS) -o $(OBJECT_DIR)/output.o $(SOURCE_DIR)/output.cpp
 
 $(OBJECT_DIR)/nodes.o: $(SOURCE_DIR)/nodes.cpp \
-    $(SOURCE_DIR)/nodes.h 
+    $(SOURCE_DIR)/nodes.h
 	$(CXX) -c $(CFLAGS) -o $(OBJECT_DIR)/nodes.o $(SOURCE_DIR)/nodes.cpp
 
 $(OBJECT_DIR)/synapses.o: $(SOURCE_DIR)/synapses.cpp \
-    $(SOURCE_DIR)/synapses.h 
+    $(SOURCE_DIR)/synapses.h
 	$(CXX) -c $(CFLAGS) -o $(OBJECT_DIR)/synapses.o $(SOURCE_DIR)/synapses.cpp
 
 $(OBJECT_DIR)/cyctimbuf.o: $(SOURCE_DIR)/cyctimbuf.cpp \
-    $(SOURCE_DIR)/cyctimbuf.h 
+    $(SOURCE_DIR)/cyctimbuf.h
 	$(CXX) -c $(CFLAGS) -o $(OBJECT_DIR)/cyctimbuf.o $(SOURCE_DIR)/cyctimbuf.cpp
 
 $(OBJECT_DIR)/random.o: $(SOURCE_DIR)/random.cpp \
-    $(SOURCE_DIR)/random.h 
+    $(SOURCE_DIR)/random.h
 	$(CXX) -c $(CFLAGS) -o $(OBJECT_DIR)/random.o $(SOURCE_DIR)/random.cpp
